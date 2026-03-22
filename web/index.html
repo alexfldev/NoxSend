@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoxSend | Envío de Archivos Blindado</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #050505; color: #eee; scroll-behavior: smooth; }
+        .hero-gradient { background: radial-gradient(circle at center, #1e293b 0%, #050505 100%); }
+        .platform-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s; }
+        .platform-card:hover { border-color: #38bdf8; transform: translateY(-5px); }
+        input::placeholder { color: #444; }
+        .loading { pointer-events: none; opacity: 0.6; }
+    </style>
+</head>
+<body>
+
+    <nav class="fixed top-0 w-full z-50 bg-black/50 backdrop-blur-md border-b border-white/10">
+        <div class="flex justify-between items-center p-6 max-w-7xl mx-auto">
+            <div class="text-2xl font-bold tracking-tighter cursor-pointer" onclick="window.scrollTo(0,0)">Nox<span class="text-sky-500">Send</span></div>
+            <div class="space-x-8 hidden md:flex text-sm uppercase tracking-widest">
+                <a href="#about" id="nav-about" class="hover:text-sky-400 transition">¿Por qué NoxSend?</a>
+                <a href="#ecosystem" id="nav-how" class="hover:text-sky-400 transition">Cómo se usa</a>
+                <a href="#decrypt" id="nav-decrypt" class="text-sky-500 font-bold hover:text-sky-400 transition">Recibir Archivo</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleLanguage()" id="lang-toggle" class="text-xs border border-white/20 px-3 py-1 rounded-full hover:bg-white/10 transition uppercase">ES / EN</button>
+                <button class="bg-white text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-sky-400 transition">App</button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero-gradient pt-40 pb-24 px-6 text-center">
+        <h1 class="text-5xl md:text-7xl font-bold mb-6 italic" id="hero-title">Envía archivos sin <br>dejar rastro.</h1>
+        <p class="text-gray-400 max-w-2xl mx-auto text-lg mb-10" id="hero-sub">
+            Comparte fotos, vídeos y documentos con la certeza de que tus archivos están blindados. Tú mantienes el control total.
+        </p>
+        <div class="flex justify-center gap-4">
+            <a href="#ecosystem" class="bg-sky-600 px-8 py-4 rounded-xl font-bold hover:bg-sky-500 transition shadow-lg shadow-sky-600/20" id="hero-btn">Empezar ahora</a>
+        </div>
+    </header>
+
+    <section id="ecosystem" class="py-20 max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold mb-4" id="eco-title">¿Cómo funciona?</h2>
+            <p class="text-gray-500" id="eco-sub">Es muy sencillo de usar.</p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="platform-card p-10 rounded-3xl border-l-4 border-l-sky-500">
+                <div class="text-sky-500 font-bold text-sm uppercase tracking-widest mb-4" id="card-send-label">Si tú envías</div>
+                <h3 class="text-3xl font-bold mb-4" id="card-send-title">Usa nuestra App</h3>
+                <p class="text-gray-400 mb-6" id="card-send-desc">Bájate nuestra aplicación. Ella limpia y cierra con llave todo antes de que salga de tu ordenador.</p>
+                <ul class="text-sm text-gray-500 space-y-2 mb-8" id="card-send-list">
+                    <li>✔ Borra metadatos (GPS, autor...)</li>
+                    <li>✔ Cifrado AES-256 en origen</li>
+                    <li>✔ El enlace muere cuando tú digas</li>
+                </ul>
+                <button class="w-full py-3 border border-white/20 rounded-xl font-bold hover:bg-white hover:text-black transition">Descargar App</button>
+            </div>
+
+            <div class="platform-card p-10 rounded-3xl border-l-4 border-l-white">
+                <div class="text-gray-500 font-bold text-sm uppercase tracking-widest mb-4" id="card-receive-label">Si tú recibes</div>
+                <h3 class="text-3xl font-bold mb-4" id="card-receive-title">Usa esta Web</h3>
+                <p class="text-gray-400 mb-6" id="card-receive-desc">No instales nada. Abre el panel de abajo, pon la llave y descarga el contenido directamente.</p>
+                <ul class="text-sm text-gray-500 space-y-2 mb-8" id="card-receive-list">
+                    <li>✔ Sin registros ni instalaciones</li>
+                    <li>✔ Descifrado local en el navegador</li>
+                    <li>✔ Privacidad absoluta garantizada</li>
+                </ul>
+                <a href="#decrypt" class="block w-full text-center py-3 bg-white/10 rounded-xl font-bold hover:bg-white/20 transition">Ir al panel</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="decrypt" class="py-32 max-w-xl mx-auto px-6">
+        <div class="bg-sky-600/10 border-2 border-sky-500/30 p-12 rounded-3xl shadow-2xl shadow-sky-500/20">
+            <h2 class="text-3xl font-bold text-center mb-2" id="decrypt-title">Recuperar Archivo</h2>
+            <p class="text-center text-gray-500 text-sm mb-8" id="decrypt-sub">Introduce el ID y la contraseña para abrir el paquete.</p>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="text-xs uppercase font-bold text-sky-500 ml-2" id="label-id">ID del archivo</label>
+                    <input type="text" id="input-id" class="w-full bg-black border border-white/10 p-4 rounded-xl mt-1 focus:border-sky-500 outline-none transition">
+                </div>
+                <div>
+                    <label class="text-xs uppercase font-bold text-sky-500 ml-2" id="label-key">Contraseña de apertura</label>
+                    <input type="password" id="input-key" class="w-full bg-black border border-white/10 p-4 rounded-xl mt-1 focus:border-sky-500 outline-none transition">
+                </div>
+                <button id="decrypt-btn" class="w-full bg-sky-600 py-4 rounded-xl font-bold text-lg hover:bg-sky-500 transition-all shadow-lg shadow-sky-600/20">Abrir y Descargar</button>
+                <p id="status-msg" class="text-center text-sm font-bold"></p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-10 border-t border-white/10 text-center text-gray-600 text-xs">
+        <p id="footer-text">© 2026 NOXSEND - Hecho en España 🇪🇸 para mejorar tu seguridad.</p>
+    </footer>
+
+    <script>
+        // --- CONFIGURACIÓN SUPABASE (REMPLAZA CON TUS DATOS) ---
+        const SB_URL = "https://bgoidqslfkiedrwrlftm.supabase.co";
+        const SB_KEY = "sb_publishable_t606hk-jApr5gyOB0wfylA_ZTQz91wI";
+        const supabase = supabase.createClient(SB_URL, SB_KEY);
+        
+
+
+        // --- TRADUCCIONES ---
+        const translations = {
+            en: {
+                "nav-about": "Why NoxSend?", "nav-how": "How to use", "nav-decrypt": "Receive", 
+                "hero-title": "Send files without <br>leaving a trace.", "hero-sub": "Share securely with the certainty that your files are shielded. You maintain total control.",
+                "eco-title": "How it works?", "decrypt-title": "Recover File", "decrypt-btn": "Decrypt & Download",
+                "status-loading": "🔍 Processing... Please wait.", "status-error": "❌ Invalid ID or Password.", "status-success": "✅ Success! Downloading..."
+            },
+            es: {
+                "nav-about": "¿Por qué NoxSend?", "nav-how": "Cómo se usa", "nav-decrypt": "Recibir",
+                "hero-title": "Envía archivos sin <br>dejar ni rastro.", "hero-sub": "Comparte con la certeza de que tus archivos están blindados. Tú mantienes el control total.",
+                "eco-title": "¿Cómo funciona?", "decrypt-title": "Recuperar Archivo", "decrypt-btn": "Abrir y Descargar",
+                "status-loading": "🔍 Procesando... Espera un momento.", "status-error": "❌ ID o Contraseña incorrectos.", "status-success": "✅ ¡Éxito! Descargando..."
+            }
+        };
+
+        let currentLang = 'es';
+
+        // --- LÓGICA DE DESCIFRADO ---
+        async function decryptFile() {
+            const fileId = document.getElementById('input-id').value.trim();
+            const password = document.getElementById('input-key').value;
+            const btn = document.getElementById('decrypt-btn');
+            const status = document.getElementById('status-msg');
+
+            if (!fileId || !password) return;
+
+            try {
+                btn.classList.add('loading');
+                status.innerText = translations[currentLang]["status-loading"];
+                status.className = "text-center text-sm font-bold text-sky-400";
+
+                // 1. Buscar en DB
+                const { data, error } = await supabase.from('archivos_seguros').select('*').eq('id', fileId).single();
+                if (error || !data) throw new Error("No encontrado");
+
+                // 2. Descargar bytes
+                const resp = await fetch(data.storage_url);
+                const buffer = await resp.arrayBuffer();
+
+                // 3. Preparar Cripto (Espejo de tu Python)
+                const nonce = buffer.slice(0, 12);
+                const encryptedData = buffer.slice(12);
+                
+                const encoder = new TextEncoder();
+                const keyMaterial = encoder.encode(password.padEnd(32).slice(0, 32));
+                const cryptoKey = await crypto.subtle.importKey("raw", keyMaterial, "AES-GCM", false, ["decrypt"]);
+
+                // 4. Descifrar
+                const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: nonce }, cryptoKey, encryptedData);
+
+                // 5. Descarga
+                const blob = new Blob([decrypted]);
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = data.nombre_archivo.replace('.nox', '');
+                link.click();
+
+                status.innerText = translations[currentLang]["status-success"];
+                status.className = "text-center text-sm font-bold text-green-400";
+            } catch (e) {
+                status.innerText = translations[currentLang]["status-error"];
+                status.className = "text-center text-sm font-bold text-red-500";
+            } finally {
+                btn.classList.remove('loading');
+            }
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'es' ? 'en' : 'es';
+            document.querySelectorAll('[id]').forEach(el => {
+                if (translations[currentLang][el.id]) el.innerHTML = translations[currentLang][el.id];
+            });
+        }
+
+        document.getElementById('decrypt-btn').onclick = decryptFile;
+    </script>
+</body>
+</html>
