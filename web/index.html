@@ -15,7 +15,6 @@
         .platform-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .platform-card:hover { border-color: #38bdf8; transform: translateY(-5px); background: rgba(255, 255, 255, 0.05); }
         
-        /* Optimizaciones de Input para móviles (evita zoom y correcciones molestas) */
         input { font-size: 16px !important; } 
         input::placeholder { color: #444; }
         .loading { pointer-events: none; opacity: 0.6; filter: grayscale(1); }
@@ -182,16 +181,22 @@
                 status.innerText = translations[currentLang]["status-loading"];
                 status.className = "text-center text-sm font-bold text-sky-400 mt-4 animate-pulse";
 
-                // 1. Fetch metadata
-                const { data, error } = await sb.from('archivos_seguros').select('*').eq('id', fileId).single();
-                if (error || !data) throw new Error("Not Found");
+                console.log("1. Buscando en base de datos...");
+                // 1. Validar en BD que el archivo existe
+                const { data: dbData, error: dbError } = await sb.from('archivos_seguros').select('*').eq('id', fileId).single();
+                if (dbError || !dbData) throw new Error("Archivo no encontrado en la base de datos.");
 
-                // 2. Download encrypted binary
-                const resp = await fetch(data.storage_url);
-                if (!resp.ok) throw new Error("Download failed");
+                console.log("2. Archivo verificado. Solicitando descarga...");
+                // 2. Obtener URL pública y descargar con fetch
+                const { data: urlData } = sb.storage.from('archivos-cifrados').getPublicUrl(fileId);
+                
+                const resp = await fetch(urlData.publicUrl);
+                if (!resp.ok) throw new Error("No se pudo descargar el archivo cifrado desde el Storage.");
+                
                 const buffer = await resp.arrayBuffer();
 
-                // 3. Setup Crypto (AES-GCM)
+                console.log("3. Archivo descargado. Iniciando descifrado...");
+                // 3. Setup Crypto (AES-GCM) - Compatible con tu Python
                 const nonce = buffer.slice(0, 12);
                 const encryptedData = buffer.slice(12);
                 const encoder = new TextEncoder();
@@ -201,17 +206,17 @@
                 // 4. Decrypt in local RAM
                 const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: nonce }, cryptoKey, encryptedData);
 
-                // 5. Robust Download (Safari/Mobile friendly)
+                console.log("4. Descifrado completado con éxito. Generando enlace de descarga...");
+                // 5. Descarga segura.
                 const blob = new Blob([decrypted], { type: 'application/octet-stream' });
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = data.nombre_archivo.replace('.nox', '');
+                link.download = `noxsend_descifrado_${fileId.substring(0,5)}.bin`; 
                 
                 document.body.appendChild(link);
                 link.click();
                 
-                // Cleanup para no saturar la memoria del móvil
                 setTimeout(() => {
                     document.body.removeChild(link);
                     window.URL.revokeObjectURL(url);
@@ -221,7 +226,7 @@
                 status.className = "text-center text-sm font-bold text-green-400 mt-4";
                 
             } catch (e) {
-                console.error(e);
+                console.error("❌ ERROR DETALLADO:", e);
                 status.innerText = translations[currentLang]["status-error"];
                 status.className = "text-center text-sm font-bold text-red-500 mt-4";
             } finally {
