@@ -182,12 +182,10 @@
                 status.className = "text-center text-sm font-bold text-sky-400 mt-4 animate-pulse";
 
                 console.log("1. Buscando en base de datos...");
-                // 1. Validar en BD que el archivo existe
                 const { data: dbData, error: dbError } = await sb.from('archivos_seguros').select('*').eq('id', fileId).single();
                 if (dbError || !dbData) throw new Error("Archivo no encontrado en la base de datos.");
 
                 console.log("2. Archivo verificado. Solicitando descarga...");
-                // 2. Obtener URL pública y descargar con fetch
                 const { data: urlData } = sb.storage.from('archivos-cifrados').getPublicUrl(fileId);
                 
                 const resp = await fetch(urlData.publicUrl);
@@ -196,18 +194,15 @@
                 const buffer = await resp.arrayBuffer();
 
                 console.log("3. Archivo descargado. Iniciando descifrado...");
-                // 3. Setup Crypto (AES-GCM) - Compatible con tu Python
                 const nonce = buffer.slice(0, 12);
                 const encryptedData = buffer.slice(12);
                 const encoder = new TextEncoder();
                 const keyMaterial = encoder.encode(password.padEnd(32, ' ').slice(0, 32));
                 const cryptoKey = await crypto.subtle.importKey("raw", keyMaterial, "AES-GCM", false, ["decrypt"]);
 
-                // 4. Decrypt in local RAM
                 const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: nonce }, cryptoKey, encryptedData);
 
-                console.log("4. Descifrado completado con éxito. Generando enlace de descarga...");
-                // 5. Descarga segura.
+                console.log("4. Descifrado completado. Generando enlace de descarga...");
                 const blob = new Blob([decrypted], { type: 'application/octet-stream' });
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
@@ -221,6 +216,23 @@
                     document.body.removeChild(link);
                     window.URL.revokeObjectURL(url);
                 }, 200);
+
+                // --- NUEVO: PASO 5. PROTOCOLO DE AUTODESTRUCCIÓN ---
+                console.log("5. Ejecutando protocolo de limpieza...");
+                const nuevasDescargas = dbData.descargas_actuales + 1;
+
+                if (nuevasDescargas >= dbData.limite_descargas) {
+                    // Borramos el archivo físico del cubo "archivos-cifrados"
+                    await sb.storage.from('archivos-cifrados').remove([fileId]);
+                    // Borramos la fila de la base de datos "archivos_seguros"
+                    await sb.from('archivos_seguros').delete().eq('id', fileId);
+                    console.log("💥 ¡BUM! Límite alcanzado. Archivo borrado para siempre.");
+                } else {
+                    // Si el límite fuera mayor a 1, solo actualizamos el contador
+                    await sb.from('archivos_seguros').update({ descargas_actuales: nuevasDescargas }).eq('id', fileId);
+                    console.log(`✅ Descarga registrada: ${nuevasDescargas}/${dbData.limite_descargas}`);
+                }
+                // ----------------------------------------------------
 
                 status.innerText = translations[currentLang]["status-success"];
                 status.className = "text-center text-sm font-bold text-green-400 mt-4";
