@@ -3,8 +3,6 @@ import secrets
 import string
 import uuid
 from datetime import datetime, timedelta, timezone
-
-# BORRA LAS ANTIGUAS Y PON ESTAS:
 from src.services.supabase_service import SupabaseService
 from src.core.crypto_manager import CryptoManager
 from src.models.paquete_metadata import PaqueteMetadata
@@ -12,7 +10,8 @@ from src.models.paquete_metadata import PaqueteMetadata
 class AppController:
     def __init__(self):
         """Inicializa el controlador y conecta con los servicios y el núcleo."""
-        # Instanciamos los módulos de nuestra arquitectura
+
+        # Instanciamos los módulos de  arquitectura
         self.supabase = SupabaseService()
         self.crypto = CryptoManager()
 
@@ -67,12 +66,12 @@ class AppController:
 
         # --- SALIDA FINAL PARA EL USUARIO ---
         print("\n" + "═"*55)
-        print("🚀 ¡ENVÍO BLINDADO COMPLETADO!")
-        print(f"🆔 ID DEL ARCHIVO: {id_archivo}")
-        print(f"🔑 LLAVE SECRETA:  {llave_secreta}")
-        print("\n🔗 Simulación de enlace para el receptor:")
+        print(" ¡ENVÍO BLINDADO COMPLETADO!")
+        print(f" ID DEL ARCHIVO: {id_archivo}")
+        print(f" LLAVE SECRETA:  {llave_secreta}")
+        print("\n Simulación de enlace para el receptor:")
         print(f"   https://noxsend.com/recibir?id={id_archivo}#{llave_secreta}")
         print("═"*55)
-        print("⚠️  Copia estos datos. Ni siquiera nosotros podemos abrirlo.\n")
+        print(" Copia estos datos. Ni siquiera nosotros podemos abrirlo.\n")
         
         return id_archivo, llave_secreta

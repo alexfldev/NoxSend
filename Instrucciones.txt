@@ -1,5 +1,57 @@
-Requisitos: Tener Python 3.10+ instalado.
-Instalación: Ejecutar pip install -r requirements.txt.
-Ejecución: Lanzar python3 main.py.
-Prueba rápida: "He incluido mis propias claves en el archivo .env para que el tribunal pueda probar la conexión real con la base de datos de producción inmediatamente".
-(Tened cuidado con las pruebas que haceis y evitad romper algo)
+****GUÍA TÉCNICA DE DESPLIEGUE Y EJECUCIÓN*****
+
+
+
+PARA QUE EL PROYECTO FUNCIONE SIGA ESTOS PASOS CORRECTAMENTE:
+
+1. REQUISITOS PREVIOS 
+
+    Intérprete de Python: Es necesario tener instalada la versión 3.10 o superior.
+
+    Conexión a Internet: La aplicación requiere salida a red para conectar con el backend de Supabase y el almacenamiento de objetos (Storage).
+
+2. Preparación del Entorno (Instalación)
+
+El proyecto incluye un archivo ***requirements.txt*** con todas las dependencias necesarias (Flet, Supabase-py, Cryptography, etc.). Para instalarlas de forma limpia, abra una terminal en la carpeta raíz del proyecto y ejecute:
+
+Bash
+
+pip install -r requirements.txt
+
+(Se recomienda el uso de un entorno virtual venv para evitar conflictos con otras librerías del sistema).
+3. Configuración de Conectividad (.env)
+
+He configurado y adjuntado un archivo .env con mis propias credenciales de producción de Supabase. Esto permite que el tribunal pueda probar el flujo de subida y cifrado de forma inmediata, conectándose directamente a mi base de datos activa.
+
+    Importante: No modifique los valores de este archivo, ya que de ellos depende la comunicación entre la App de escritorio y la plataforma Web.
+
+4. Ejecución del Emisor (App de Escritorio)
+
+Una vez instaladas las dependencias, lance el cliente de escritorio con el siguiente comando:
+Bash
+
+python3 main.py
+
+    Paso 1: Pulse en "1. Elegir Archivo" y seleccione cualquier documento (límite de 50MB en el MVP).
+
+    Paso 2: Pulse en "2. Blindar y Subir". El sistema cifrará el archivo en local con AES-256-GCM.
+
+    Paso 3: Al finalizar, la interfaz mostrará un ID de Paquete y una Llave de Descifrado. Cópielos (puede usar los botones de copia rápida).
+
+5. Ejecución del Receptor (Web)
+
+Para verificar que el archivo se ha subido y puede ser recuperado:
+
+    Abra el archivo https://www.noxsend.com/
+
+    Pegue el ID y la Llave generados por la App de escritorio.
+
+    Pulse en "Descargar y Descifrar". El navegador descargará el bloque de datos cifrado y aplicará la llave localmente para reconstruir el archivo original.
+    
+    hay limite de 1 descarga 
+
+⚠️ AVISO PARA EL TRIBUNAL
+
+    Pruebas : El sistema está en fase MVP. Por favor, eviten realizar pruebas de carga masiva o modificar las políticas RLS de la base de datos si acceden al código fuente, para no interrumpir el servicio.
+
+    Seguridad Zero-Knowledge: Tengan en cuenta que ni yo como desarrollador, ni ustedes como evaluadores, podremos recuperar el contenido del archivo si se pierde la Llave Secreta, ya que esta nunca se almacena en el servidor.

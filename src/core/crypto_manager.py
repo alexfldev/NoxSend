@@ -21,7 +21,7 @@ class CryptoManager:
             nonce = os.urandom(12)
             
             if not os.path.exists(ruta_archivo):
-                print(f"❌ Error: No se encuentra el archivo en {ruta_archivo}")
+                print(f"❌ ❌ Error: No se encuentra el archivo en {ruta_archivo}❌ ❌ ")
                 return None
                 
             with open(ruta_archivo, "rb") as f:
@@ -39,5 +39,5 @@ class CryptoManager:
             return ruta_salida
             
         except Exception as e:
-            print(f"❌ Error crítico durante el cifrado local: {e}")
+            print(f"❌ ❌ Error crítico durante el cifrado local: {e}❌ ❌ ")
             return None

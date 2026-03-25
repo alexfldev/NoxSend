@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NoxSend | Envío de Archivos Blindado</title>
+    <title>NoxSend | Envío de Archivos Cifrados</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -48,11 +48,11 @@
 
     <header class="hero-gradient pt-48 pb-32 px-6 text-center">
         <div class="inline-block px-4 py-1.5 mb-6 border border-sky-500/30 rounded-full bg-sky-500/10 text-sky-400 text-xs font-bold tracking-widest uppercase animate-pulse">
-            Encriptación de grado militar
+            Encriptación AES-256 de extremo a extremo
         </div>
-        <h1 class="text-5xl md:text-8xl font-bold mb-8 italic tracking-tight" id="hero-title">Envía archivos sin <br>dejar ni rastro.</h1>
+        <h1 class="text-5xl md:text-8xl font-bold mb-8 italic tracking-tight" id="hero-title">Envía archivos sin <br>dejar rastro.</h1>
         <p class="text-gray-400 max-w-2xl mx-auto text-lg md:text-xl mb-12 leading-relaxed" id="hero-sub">
-            Tus documentos se cifran en tu dispositivo. Nosotros solo transportamos ruido. Tú mantienes la llave y el control total.
+            Tus documentos se cifran en tu dispositivo. NoxSend solo transporta numeros. Tú mantienes la llave y el control total.
         </p>
         <div class="flex justify-center gap-4">
             <a href="#decrypt" class="bg-sky-600 px-10 py-5 rounded-2xl font-bold text-lg hover:bg-sky-500 transition shadow-2xl shadow-sky-600/40 active:scale-95" id="hero-btn">Recuperar Archivo</a>
@@ -87,7 +87,7 @@
             <div class="platform-card p-12 rounded-[2.5rem] border-l-4 border-l-white/20">
                 <div class="text-gray-500 font-black text-xs uppercase tracking-[0.3em] mb-6" id="card-receive-label">RECEPTOR</div>
                 <h3 class="text-3xl font-bold mb-5" id="card-receive-title">NoxSend Web</h3>
-                <p class="text-gray-400 mb-8 leading-relaxed" id="card-receive-desc">El receptor solo necesita el enlace y la llave. El descifrado ocurre en caliente en el navegador.</p>
+                <p class="text-gray-400 mb-8 leading-relaxed" id="card-receive-desc">El receptor solo necesita el enlace y la llave. El descifrado ocurre en el navegador.</p>
                 <ul class="text-sm text-gray-500 space-y-4 mb-10" id="card-receive-list">
                     <li class="flex items-center gap-3">
                         <span class="text-white">✔</span> Sin instalaciones ni registro
@@ -226,7 +226,7 @@
                     await sb.storage.from('archivos-cifrados').remove([fileId]);
                     // Borramos la fila de la base de datos "archivos_seguros"
                     await sb.from('archivos_seguros').delete().eq('id', fileId);
-                    console.log("💥 ¡BUM! Límite alcanzado. Archivo borrado para siempre.");
+                    console.log("Límite alcanzado. Archivo borrado para siempre.");
                 } else {
                     // Si el límite fuera mayor a 1, solo actualizamos el contador
                     await sb.from('archivos_seguros').update({ descargas_actuales: nuevasDescargas }).eq('id', fileId);

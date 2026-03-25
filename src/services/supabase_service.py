@@ -6,7 +6,6 @@ class SupabaseService:
     def __init__(self):
         """Inicializa la conexión a Supabase usando las variables ocultas del .env"""
         load_dotenv()
-        # Buscamos el NOMBRE de la variable, no el valor
         url: str = os.getenv("SUPABASE_URL")
         key: str = os.getenv("SUPABASE_KEY")
         
@@ -30,15 +29,15 @@ class SupabaseService:
             print(f"📦 Blob subido al Storage con éxito (ID: {id_archivo}).")
             return True
         except Exception as e:
-            print(f"❌ ERROR EN STORAGE: {e}")
+            print(f"❌ ERROR EN STORAGE: {e}❌")
             return False
 
     def registrar_metadatos(self, datos_paquete: dict) -> bool:
         """Guarda la información pública (tamaño, caducidad) en PostgreSQL."""
         try:
             self.cliente.table(self.tabla_nombre).insert(datos_paquete).execute()
-            print("✅ Metadatos registrados en la base de datos.")
+            print(" Metadatos registrados en la base de datos.")
             return True
         except Exception as e:
-            print(f"❌ Error al guardar metadatos en la base de datos: {e}")
+            print(f"❌ Error al guardar metadatos en la base de datos: {e}❌ ")
             return False
