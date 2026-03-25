@@ -1,0 +1,5 @@
+Requisitos: Tener Python 3.10+ instalado.
+Instalación: Ejecutar pip install -r requirements.txt.
+Ejecución: Lanzar python3 main.py.
+Prueba rápida: "He incluido mis propias claves en el archivo .env para que el tribunal pueda probar la conexión real con la base de datos de producción inmediatamente".
+(Tened cuidado con las pruebas que haceis y evitad romper algo)

@@ -1,3 +1,5 @@
+# NÚCLEO DE SEGURIDAD NOXSEND - PROPIEDAD DE ALEJANDRO FEVRIER
+# Implementación de cifrado simétrico AES-256-GCM Zero-Knowledge.
 import os
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 

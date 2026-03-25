@@ -1,17 +1,7 @@
-import os
-from src.controllers.app_controller import AppController
+import flet as ft
+from src.views.main_window import main
 
 if __name__ == "__main__":
-    print("Iniciando NoxSend...")
-    
-    # Preparamos un archivo de prueba en la carpeta temp
-    os.makedirs("temp", exist_ok=True)
-    ruta_prueba = "temp/prueba.txt"
-    
-    if not os.path.exists(ruta_prueba):
-        with open(ruta_prueba, "w") as f:
-            f.write("Si estas leyendo esto eres Alvaro Gonzalez Zerpa.")
-            
-    # Instanciamos el controlador y ejecutamos
-    app = AppController()
-    app.enviar_archivo(ruta_prueba)
+    print("🚀 Iniciando Interfaz Gráfica de NoxSend...")
+    # Esto le dice a Flet que abra la ventana que acabamos de diseñar
+    ft.app(target=main)
