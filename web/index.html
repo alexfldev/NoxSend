@@ -230,7 +230,7 @@
                 } else {
                     // Si el límite fuera mayor a 1, solo actualizamos el contador
                     await sb.from('archivos_seguros').update({ descargas_actuales: nuevasDescargas }).eq('id', fileId);
-                    console.log(`✅ Descarga registrada: ${nuevasDescargas}/${dbData.limite_descargas}`);
+                    console.log(`Descarga registrada: ${nuevasDescargas}/${dbData.limite_descargas}`);
                 }
                 // ----------------------------------------------------
 
@@ -238,7 +238,7 @@
                 status.className = "text-center text-sm font-bold text-green-400 mt-4";
                 
             } catch (e) {
-                console.error("❌ ERROR DETALLADO:", e);
+                console.error("ERROR DETALLADO:", e);
                 status.innerText = translations[currentLang]["status-error"];
                 status.className = "text-center text-sm font-bold text-red-500 mt-4";
             } finally {
