@@ -1,0 +1,76 @@
+/* =========================================
+   ESTILOS BASE DE LA WEB
+========================================= */
+
+/* Estilo general de toda la página */
+body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; /* La fuente moderna que usamos */
+    background-color: #050505; /* Fondo negro casi puro */
+    color: #eee; /* Texto en blanco roto para no cegar */
+    scroll-behavior: smooth; /* Para que al pulsar un enlace baje suave, no de golpe */
+}
+
+/* El fondo con degradado de la cabecera principal */
+.hero-gradient { 
+    background: radial-gradient(circle at center, #1e293b 0%, #050505 100%); 
+}
+
+/* Efecto al pasar el ratón por las tarjetas de "Cómo funciona" */
+.step-card:hover { 
+    border-color: #38bdf8; /* Se pone el borde azulito */
+    transform: translateY(-5px); /* Hace un saltito hacia arriba */
+    transition: all 0.3s; /* Hace que el saltito sea suave (0.3 segundos) */
+}
+
+/* Tarjetas transparentes con un borde sutil */
+.platform-card { 
+    background: rgba(255, 255, 255, 0.03); 
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+}
+
+
+/* =========================================
+   ANIMACIÓN: CINTA TRANSPORTADORA DE HACKEOS
+========================================= */
+
+/* La caja que envuelve la cinta y oculta lo que se sale por los lados */
+.marquee-container {
+    width: 100%;
+    overflow: hidden; /* Corta todo lo que se salga de la pantalla */
+    position: relative;
+    /* Efecto difuminado en los bordes para que las letras no desaparezcan de golpe */
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+/* La cinta que lleva los nombres de las empresas y se mueve */
+.marquee-track {
+    display: flex;
+    gap: 1rem;
+    width: max-content; /* Se estira todo lo necesario para que quepan las palabras */
+    animation: scroll-left 30s linear infinite; /* Tarda 30s en dar una vuelta completa */
+}
+
+/* Si el usuario pone el ratón encima de la cinta, se pausa para que pueda leer */
+.marquee-track:hover {
+    animation-play-state: paused;
+}
+
+/* El motor que hace que se mueva hacia la izquierda */
+@keyframes scroll-left {
+    0% { transform: translateX(0); } /* Empieza en su sitio */
+    100% { transform: translateX(-50%); } /* Se mueve hasta la mitad exacta (el salto invisible) */
+}
+
+/* 📱 ADAPTACIÓN PARA MÓVILES */
+@media (max-width: 768px) {
+    .marquee-container {
+        /* En móvil el difuminado de los lados es más pequeño (5%) para ganar espacio */
+        -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+        mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    }
+    .marquee-track {
+        /* En móvil va más rápido (20s) porque la pantalla es más pequeña */
+        animation: scroll-left 20s linear infinite; 
+    }
+}
