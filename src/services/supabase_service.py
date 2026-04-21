@@ -4,40 +4,38 @@ from dotenv import load_dotenv
 
 class SupabaseService:
     def __init__(self):
-        """Inicializa la conexión a Supabase usando las variables ocultas del .env"""
         load_dotenv()
         url: str = os.getenv("SUPABASE_URL")
         key: str = os.getenv("SUPABASE_KEY")
-        
         if not url or not key:
-            raise ValueError("⚠️ Faltan las credenciales de Supabase en el archivo .env")
-            
-        # Cliente oficial de Supabase
+            raise ValueError("Error: Credenciales no configuradas.")
         self.cliente: Client = create_client(url, key)
         self.bucket_nombre = "archivos-cifrados"
-        self.tabla_nombre = "archivos_seguros" 
+        self.tabla_nombre = "archivos_seguros"
 
-    def subir_archivo_cifrado(self, id_archivo: str, ruta_archivo_local: str) -> bool:
-        """Sube el archivo al Storage. OJO: Usa el ID como nombre para no revelar el nombre original."""
+    def crear_usuario(self, email: str, password: str):
         try:
-            with open(ruta_archivo_local, "rb") as f:
-                self.cliente.storage.from_(self.bucket_nombre).upload(
-                    path=id_archivo,
-                    file=f,
-                    file_options={"content-type": "application/octet-stream", "upsert": "true"}
-                )
-            print(f"📦 Blob subido al Storage con éxito (ID: {id_archivo}).")
-            return True
+            self.cliente.auth.sign_up({"email": email, "password": password})
+            return True, "Registro exitoso"
         except Exception as e:
-            print(f"❌ ERROR EN STORAGE: {e}❌")
-            return False
+            return False, str(e)
 
-    def registrar_metadatos(self, datos_paquete: dict) -> bool:
-        """Guarda la información pública (tamaño, caducidad) en PostgreSQL."""
+    def iniciar_sesion(self, email: str, password: str):
         try:
-            self.cliente.table(self.tabla_nombre).insert(datos_paquete).execute()
-            print(" Metadatos registrados en la base de datos.")
+            self.cliente.auth.sign_in_with_password({"email": email, "password": password})
+            return True, "Login correcto"
+        except Exception:
+            return False, "Credenciales incorrectas"
+
+    def subir_archivo_cifrado(self, id_archivo, ruta_local):
+        try:
+            with open(ruta_local, "rb") as f:
+                self.cliente.storage.from_(self.bucket_nombre).upload(path=id_archivo, file=f)
             return True
-        except Exception as e:
-            print(f"❌ Error al guardar metadatos en la base de datos: {e}❌ ")
-            return False
+        except: return False
+
+    def registrar_metadatos(self, datos):
+        try:
+            self.cliente.table(self.tabla_nombre).insert(datos).execute()
+            return True
+        except: return False

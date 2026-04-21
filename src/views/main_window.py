@@ -1,35 +1,30 @@
 import flet as ft
-from src.views.onboarding_view import get_onboarding_view
-from src.views.login_view import get_login_view
-from src.views.dashboard_view import get_dashboard_view
+from src.views.login_view import LoginView
+from src.views.register_view import RegisterView
+from src.views.dashboard_view import DashboardView
 
 def main(page: ft.Page):
-    # 1. Configuración de la ventana principal
-    page.title = "NoxSend - Zero Knowledge"
-    page.theme_mode = ft.ThemeMode.DARK
+    page.title = "NoxSend Workspace"
     page.padding = 0
-    page.window_width = 1000
+    page.window_width = 1100
     page.window_height = 700
-    page.window_min_width = 800
+    page.window_min_width = 900
     page.window_min_height = 600
 
-    # 2. Rutas (El GPS de nuestra aplicación)
-    def ir_al_dashboard():
-        page.clean()
-        vista_dashboard = get_dashboard_view(page)
-        page.add(vista_dashboard)
+    def route_change(e):
+        page.views.clear()
+        
+        if page.route == "/login":
+            page.views.append(LoginView(page))
+        elif page.route == "/register":
+            page.views.append(RegisterView(page))
+        elif page.route == "/dashboard":
+            page.views.append(DashboardView(page))
+            
         page.update()
 
-    def ir_al_login():
-        page.clean()
-        vista_login = get_login_view(page, al_completar_login=ir_al_dashboard)
-        page.add(vista_login)
-        page.update()
-
-    # 3. Arranque de la App (Mostramos el Onboarding/Tutorial primero)
-    # Al terminar el tutorial, llamará a "ir_al_login"
-    vista_tutorial = get_onboarding_view(page, al_completar_tutorial=ir_al_login)
-    page.add(vista_tutorial)
+    page.on_route_change = route_change
+    page.go("/login")
 
 if __name__ == "__main__":
     ft.app(target=main)

@@ -1,69 +1,83 @@
 import flet as ft
 from src.controllers.app_controller import AppController
 
-def LoginView(page: ft.Page):
+def RegisterView(page: ft.Page):
     controlador = AppController()
 
-    # --- Paleta de colores ---
-    BG_ROOT = "#06080a"      # Fondo principal
-    BG_PANEL = "#0f1115"     # Fondo del formulario
-    ACCENT = "#3b82f6"       # Color de acento (Azul)
-    TEXT_MUTED = "grey500"   # Texto secundario
+    # --- Paleta de colores (Idéntica al Login) ---
+    BG_ROOT = "#06080a"      
+    BG_PANEL = "#0f1115"     
+    ACCENT = "#3b82f6"       
+    TEXT_MUTED = "grey500"   
     BORDER_COLOR = ft.Colors.with_opacity(0.1, "white")
 
-    # --- Lógica de inicio de sesión ---
-    def realizar_login(e):
-        boton_login_btn.disabled = True
+    # --- Lógica de Registro ---
+    def realizar_registro(e):
+        if not input_email.value or not input_pass.value or not input_confirm.value:
+            page.overlay.append(ft.SnackBar(ft.Text("Por favor, rellena todos los campos."), bgcolor="orange", open=True))
+            page.update()
+            return
+            
+        if input_pass.value != input_confirm.value:
+            page.overlay.append(ft.SnackBar(ft.Text("Las contraseñas no coinciden. Revisa tu clave maestra."), bgcolor="red", open=True))
+            page.update()
+            return
+
+        boton_registro_btn.disabled = True
         cargando.visible = True
         page.update()
 
-        exito, msg = controlador.iniciar_sesion(input_email.value, input_pass.value)
+        exito, msg = controlador.registrar_usuario(input_email.value, input_pass.value)
         
         cargando.visible = False
         if exito:
-            page.go("/dashboard") 
+            page.overlay.append(ft.SnackBar(ft.Text("¡Bóveda creada con éxito! Ya puedes iniciar sesión."), bgcolor="green", open=True))
+            page.go("/login") 
         else:
             page.overlay.append(ft.SnackBar(ft.Text(f"Error: {msg}"), bgcolor="red", open=True))
-            boton_login_btn.disabled = False
+            boton_registro_btn.disabled = False
         page.update()
 
     # --- Componentes del formulario ---
     input_email = ft.TextField(
-        label="Correo electrónico", width=340, border_radius=12,
+        label="Correo electrónico", width=380, border_radius=12, text_size=15, height=60,
         bgcolor=BG_ROOT, border_color=BORDER_COLOR, prefix_icon=ft.Icons.EMAIL_OUTLINED,
         focused_border_color=ACCENT, cursor_color=ACCENT
     )
     
     input_pass = ft.TextField(
-        label="Contraseña", password=True, can_reveal_password=True, width=340, border_radius=12,
+        label="Crea tu Contraseña Maestra", password=True, can_reveal_password=True, width=380, border_radius=12, text_size=15, height=60,
         bgcolor=BG_ROOT, border_color=BORDER_COLOR, prefix_icon=ft.Icons.LOCK_OUTLINED,
+        focused_border_color=ACCENT, cursor_color=ACCENT
+    )
+
+    input_confirm = ft.TextField(
+        label="Confirma tu Contraseña", password=True, can_reveal_password=True, width=380, border_radius=12, text_size=15, height=60,
+        bgcolor=BG_ROOT, border_color=BORDER_COLOR, prefix_icon=ft.Icons.CHECK_CIRCLE_OUTLINE,
         focused_border_color=ACCENT, cursor_color=ACCENT
     )
     
     cargando = ft.ProgressRing(visible=False, width=24, height=24, color=ACCENT, stroke_width=3)
     
-    boton_login_btn = ft.ElevatedButton(
-        "Iniciar sesión", icon=ft.Icons.LOGIN, width=340, height=50,
+    boton_registro_btn = ft.ElevatedButton(
+        "Crear mi Bóveda", icon=ft.Icons.SHIELD, width=380, height=55,
         bgcolor=ACCENT, color="white", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=12)),
-        on_click=realizar_login
+        on_click=realizar_registro
     )
 
-    # Efecto de resplandor (glow) del botón principal
-    boton_login = ft.Container(
-        content=boton_login_btn,
+    boton_registro = ft.Container(
+        content=boton_registro_btn,
         shadow=ft.BoxShadow(spread_radius=1, blur_radius=20, color=ft.Colors.with_opacity(0.3, ACCENT)) 
     )
 
-    # --- Contenedor de imagen (Showcase) ---
+    # --- Contenedor de imagen (Mantenemos la coherencia visual) ---
     hueco_foto_app = ft.Container(
-        width=550,
-        height=320,
+        width=550, height=320,
         bgcolor=ft.Colors.with_opacity(0.05, "white"), 
         border=ft.border.all(1, ft.Colors.with_opacity(0.2, "white")),
         border_radius=12,
         shadow=ft.BoxShadow(spread_radius=5, blur_radius=30, color=ft.Colors.with_opacity(0.4, "black")),
         content=ft.Column([
-            # Barra superior estilo ventana de macOS
             ft.Container(
                 bgcolor=ft.Colors.with_opacity(0.1, "black"),
                 padding=ft.padding.symmetric(horizontal=12, vertical=8),
@@ -73,7 +87,6 @@ def LoginView(page: ft.Page):
                     ft.CircleAvatar(radius=5, bgcolor="#27c93f"),
                 ], spacing=6)
             ),
-            # Placeholder
             ft.Container(
                 expand=True, alignment=ft.alignment.center,
                 content=ft.Column([
@@ -84,14 +97,14 @@ def LoginView(page: ft.Page):
         ], spacing=0)
     )
 
-    # --- Ensamblaje de la vista (Pantalla dividida) ---
+    # --- Ensamblaje de la vista ---
     return ft.View(
-        "/login",
+        "/register",
         padding=0,
         bgcolor=BG_PANEL,
         controls=[
             ft.Row([
-                # --- PANEL IZQUIERDO: Información del producto ---
+                # --- PANEL IZQUIERDO ---
                 ft.Container(
                     expand=5,
                     bgcolor=BG_ROOT,
@@ -108,9 +121,9 @@ def LoginView(page: ft.Page):
                         
                         ft.Container(expand=True),
                         
-                        ft.Text("El estándar en cifrado de extremo a extremo.", size=38, weight="black", color="white", style=ft.TextStyle(height=1.1)),
+                        ft.Text("Toma el control absoluto de tus datos.", size=38, weight="black", color="white", style=ft.TextStyle(height=1.1)),
                         ft.Container(height=10),
-                        ft.Text("Protege, envía y gestiona tus archivos de forma local. Tu privacidad garantizada en todo momento.", size=16, color="white70", width=500),
+                        ft.Text("Crea tu bóveda personal en segundos. Al ser una arquitectura Zero-Knowledge, la seguridad empieza en tu propio dispositivo.", size=16, color="white70", width=500),
                         ft.Container(height=30),
                         
                         hueco_foto_app, 
@@ -119,7 +132,7 @@ def LoginView(page: ft.Page):
                     ], horizontal_alignment="start"),
                 ),
 
-                # --- PANEL DERECHO: Formulario de inicio de sesión ---
+                # --- PANEL DERECHO: Formulario de Registro ---
                 ft.Container(
                     expand=4,
                     bgcolor=BG_PANEL,
@@ -133,7 +146,7 @@ def LoginView(page: ft.Page):
                                 ft.Text("Servidor Operativo", size=10, color=TEXT_MUTED, weight="bold")
                             ])
                         ], alignment="spaceBetween"),
-                        ft.Divider(height=40, color=BORDER_COLOR),
+                        ft.Divider(height=20, color=BORDER_COLOR),
                         
                         # --- Formulario central ---
                         ft.Container(
@@ -141,48 +154,51 @@ def LoginView(page: ft.Page):
                             alignment=ft.alignment.center, 
                             content=ft.Column([
                                 ft.Container(
-                                    content=ft.Icon(ft.Icons.ACCOUNT_CIRCLE, color=ACCENT, size=45),
-                                    padding=15, bgcolor=ft.Colors.with_opacity(0.1, ACCENT), border_radius=20, margin=ft.margin.only(bottom=10)
+                                    content=ft.Icon(ft.Icons.PERSON_ADD_ALT_1_ROUNDED, color=ACCENT, size=40),
+                                    padding=15, bgcolor=ft.Colors.with_opacity(0.1, ACCENT), border_radius=24, margin=ft.margin.only(bottom=5)
                                 ),
-                                ft.Text("Bienvenido", size=26, weight="black", color="white"),
-                                ft.Text("Ingresa tus credenciales para continuar", size=14, color=TEXT_MUTED),
-                                ft.Container(height=25),
+                                ft.Text("Crear Auditoría", size=26, weight="black", color="white"),
+                                ft.Text("Configura tus credenciales de acceso", size=14, color=TEXT_MUTED),
+                                ft.Container(height=15),
                                 
                                 input_email, 
                                 input_pass,
+                                input_confirm,
                                 
-                                # Botón "¿Olvidaste tu contraseña?" alineado a la derecha del input
                                 ft.Container(
-                                    width=340, 
-                                    alignment=ft.alignment.center_right,
-                                    content=ft.TextButton("¿Olvidaste tu contraseña?", style=ft.ButtonStyle(color=TEXT_MUTED, padding=0))
+                                    width=380, 
+                                    padding=ft.padding.only(top=5),
+                                    content=ft.Row([
+                                        ft.Icon(ft.Icons.WARNING_AMBER_ROUNDED, color=ft.Colors.RED_400, size=16),
+                                        ft.Text("Crea una contraseña fuerte. No podremos recuperarla.", color=ft.Colors.RED_400, size=12)
+                                    ], alignment="center")
                                 ),
                                 
-                                ft.Container(height=15),
-                                boton_login,
+                                ft.Container(height=10),
+                                boton_registro,
                                 ft.Container(height=5),
                                 cargando,
                             ], horizontal_alignment="center", spacing=5)
                         ),
                         
-                        # --- Pie de página y Registro (Fijado abajo) ---
+                        # --- Pie de página y Login (Fijado abajo) ---
                         ft.Column([
-                            ft.Divider(height=30, color=BORDER_COLOR),
+                            ft.Divider(height=20, color=BORDER_COLOR),
                             ft.Row([
-                                ft.Text("¿Aún no tienes una cuenta?", color=TEXT_MUTED, size=13),
+                                ft.Text("¿Ya tienes una bóveda creada?", color=TEXT_MUTED, size=13),
                                 ft.TextButton(
-                                    "Crear una cuenta", 
-                                    icon=ft.Icons.ARROW_FORWARD_ROUNDED, 
+                                    "Iniciar sesión", 
+                                    icon=ft.Icons.LOGIN, 
                                     icon_color=ACCENT, 
                                     style=ft.ButtonStyle(color=ACCENT, overlay_color=ft.Colors.with_opacity(0.1, ACCENT)), 
-                                    on_click=lambda _: page.go("/register")
+                                    on_click=lambda _: page.go("/login")
                                 )
                             ], alignment="center", spacing=5),
                             ft.Container(height=10),
                             ft.Text("NoxSend Workspace © 2024", size=11, color=ft.Colors.with_opacity(0.3, "white"), text_align="center")
                         ], horizontal_alignment="center", spacing=0)
                         
-                    ], alignment="spaceBetween") # <-- Esto asegura que el header quede arriba, el form en el medio, y el footer abajo
+                    ], alignment="spaceBetween") 
                 )
             ], expand=True, spacing=0)
         ]

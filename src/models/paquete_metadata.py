@@ -1,31 +1,28 @@
 from dataclasses import dataclass
-from typing import Optional
 
 @dataclass
 class PaqueteMetadata:
+    """
+    Esto es básicamente una 'plantilla' o 'molde'. 
+    Sirve para asegurarme de que a la base de datos de Supabase solo se envía 
+    esta información pública. Fíjate que NO guardamos ni contraseñas ni nombres de archivo.
+    """
     id: str
     tamano_bytes: int
     creado_en: str
     expira_en: str
-    requiere_gan: bool = False
-    gan_lat: Optional[float] = None
-    gan_lng: Optional[float] = None
+    descargas_actuales: int = 0
+    limite_descargas: int = 1
+    estado: str = "activo"
 
-    def to_dict(self):
-        """Convierte la DataClass a un diccionario compatible con Supabase."""
-        # 1. Diccionario base solo con lo obligatorio (lo que ya tienes en tu DB)
-        datos = {
+    def to_dict(self) -> dict:
+        """Convierte este molde en un diccionario normal para que Supabase lo entienda al subirlo."""
+        return {
             "id": self.id,
             "tamano_bytes": self.tamano_bytes,
             "creado_en": self.creado_en,
-            "expira_en": self.expira_en
+            "expira_en": self.expira_en,
+            "descargas_actuales": self.descargas_actuales,
+            "limite_descargas": self.limite_descargas,
+            "estado": self.estado
         }
-        
-        # 2. Solo si el G.A.N. está activado, inyectamos los campos extra.
-        # Si no está activado, la base de datos ni se entera de que existen.
-        if self.requiere_gan:
-            datos["requiere_gan"] = True
-            datos["gan_lat"] = self.gan_lat
-            datos["gan_lng"] = self.gan_lng
-            
-        return datos
