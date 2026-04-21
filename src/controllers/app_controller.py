@@ -21,7 +21,7 @@ class AppController:
     def iniciar_sesion(self, email, pwd):
         return self.supabase.iniciar_sesion(email, pwd)
 
-    def enviar_archivo(self, ruta_original: str):
+    def enviar_archivo(self, ruta_original: str, horas_expiracion: int = 24):
         id_archivo = str(uuid.uuid4())
         llave_secreta = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(16))
         
@@ -33,24 +33,22 @@ class AppController:
             id=id_archivo,
             tamano_bytes=os.path.getsize(ruta_cifrada),
             creado_en=ahora.isoformat(),
-            expira_en=(ahora + timedelta(hours=24)).isoformat()
+            expira_en=(ahora + timedelta(hours=horas_expiracion)).isoformat() # AQUÍ APLICAMOS EL TIEMPO ELEGIDO
         )
 
         if self.supabase.subir_archivo_cifrado(id_archivo, ruta_cifrada):
             self.supabase.registrar_metadatos(paquete.to_dict())
             self.vault.registrar_envio(id_archivo, os.path.basename(ruta_original), ahora.strftime("%Y-%m-%d %H:%M"))
             
-            # --- NUEVO: Extraer una muestra del ruido matemático para la Auditoría ---
             try:
                 with open(ruta_cifrada, "rb") as f:
-                    muestra_bytes = f.read(512) # Leemos los primeros 512 bytes del archivo encriptado
+                    muestra_bytes = f.read(512) 
                 muestra_b64 = base64.b64encode(muestra_bytes).decode('utf-8')
             except:
                 muestra_b64 = "Error al leer la muestra cifrada."
-            # -------------------------------------------------------------------------
 
             os.remove(ruta_cifrada)
-            return id_archivo, llave_secreta, muestra_b64 # Ahora devolvemos 3 variables
+            return id_archivo, llave_secreta, muestra_b64 
         return None
 
     def obtener_boveda(self):

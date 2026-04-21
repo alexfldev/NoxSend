@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NoxSend | Envío de Archivos Blindado</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;700&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -15,13 +13,11 @@
     <nav class="fixed top-0 w-full z-50 bg-black/50 backdrop-blur-md border-b border-white/10">
         <div class="flex justify-between items-center p-6 max-w-7xl mx-auto">
             <div class="text-2xl font-bold tracking-tighter">Nox<span class="text-sky-500">Send</span></div>
-            
             <div class="space-x-8 hidden md:flex text-sm uppercase tracking-widest">
                 <a href="#about" id="nav-about" class="hover:text-sky-400 transition">¿Por qué NoxSend?</a>
                 <a href="#ecosystem" id="nav-how" class="hover:text-sky-400 transition">Cómo se usa</a>
                 <a href="#decrypt" id="nav-decrypt" class="text-sky-500 font-bold hover:text-sky-400 transition">Recibir Archivo</a>
             </div>
-            
             <div class="flex items-center gap-4">
                 <button onclick="toggleLanguage()" id="lang-toggle" class="text-xs border border-white/20 px-3 py-1 rounded-full hover:bg-white/10 transition uppercase">ES / EN</button>
                 <button id="nav-btn-app" class="bg-white text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-sky-400 transition">Probar App</button>
@@ -31,9 +27,7 @@
 
     <header class="hero-gradient pt-40 pb-24 px-6 text-center">
         <h1 class="text-5xl md:text-7xl font-bold mb-6 italic" id="hero-title">Envía archivos sin <br>dejar rastro.</h1>
-        <p class="text-gray-400 max-w-2xl mx-auto text-lg mb-10" id="hero-sub">
-            Comparte fotos, vídeos y documentos con la certeza de que tus archivos están blindados. Gracias a nuestra tecnología, tú mantienes el control total.
-        </p>
+        <p class="text-gray-400 max-w-2xl mx-auto text-lg mb-10" id="hero-sub">Comparte fotos, vídeos y documentos con la certeza de que tus archivos están blindados. Gracias a nuestra tecnología, tú mantienes el control total.</p>
         <button class="bg-sky-600 px-8 py-4 rounded-xl font-bold hover:bg-sky-500 transition shadow-lg shadow-sky-600/20" id="hero-btn">Descargar para ordenador</button>
     </header>
 
@@ -42,18 +36,14 @@
             <h2 class="text-xl md:text-3xl font-bold text-red-500 mb-3 md:mb-4" id="breach-title">Ninguna nube centralizada es 100% segura.</h2>
             <p class="text-gray-400 text-sm md:text-base" id="breach-sub">Millones de cuentas y archivos privados han sido expuestos porque los servidores guardaban las "llaves" de los usuarios.</p>
         </div>
-        
         <div class="marquee-container opacity-70">
             <div class="marquee-track">
                 <span class="bg-black/50 border border-red-500/30 px-4 py-2 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">Wattpad <span class="text-red-400 ml-1">(270M expuestos)</span></span>
                 <span class="bg-black/50 border border-red-500/30 px-4 py-2 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">Dropbox <span class="text-red-400 ml-1">(68M expuestos)</span></span>
                 <span class="bg-black/50 border border-red-500/30 px-4 py-2 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">LinkedIn <span class="text-red-400 ml-1">(700M expuestos)</span></span>
                 <span class="bg-black/50 border border-red-500/30 px-4 py-2 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">Canva <span class="text-red-400 ml-1">(137M expuestos)</span></span>
-                <span class="bg-black/50 border border-red-500/30 px-4 py-2 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">Crunchyroll <span class="text-red-400 ml-1">(Filtración)</span></span>
-                <span class="bg-black/50 border border-red-500/30 px-4 py-2 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">Yahoo <span class="text-red-400 ml-1">(3 Billones)</span></span>
             </div>
         </div>
-
         <div class="text-center mt-8 md:mt-12 relative z-10">
             <p class="text-[10px] md:text-sm font-bold text-white uppercase tracking-widest bg-red-600/20 inline-block px-4 md:px-6 py-2 rounded-full border border-red-500/50" id="breach-conclusion">¿Vas a confiarles tus documentos más sensibles?</p>
         </div>
@@ -64,7 +54,6 @@
             <h2 class="text-4xl font-bold mb-4" id="eco-title">¿Cómo funciona?</h2>
             <p class="text-gray-500" id="eco-sub">Es muy sencillo de usar.</p>
         </div>
-        
         <div class="grid md:grid-cols-2 gap-8">
             <div class="platform-card p-10 rounded-3xl border-l-4 border-l-sky-500">
                 <div class="text-sky-500 font-bold text-sm uppercase tracking-widest mb-4" id="card-send-label">Si tú envías</div>
@@ -77,7 +66,6 @@
                 </ul>
                 <button class="w-full py-3 border border-white/20 rounded-xl font-bold hover:bg-white hover:text-black transition" id="card-send-btn">Descargar App</button>
             </div>
-
             <div class="platform-card p-10 rounded-3xl border-l-4 border-l-white">
                 <div class="text-gray-500 font-bold text-sm uppercase tracking-widest mb-4" id="card-receive-label">Si tú recibes</div>
                 <h3 class="text-3xl font-bold mb-4" id="card-receive-title">Usa esta Web</h3>
@@ -108,7 +96,6 @@
         <div class="bg-sky-600/10 border-2 border-sky-500/30 p-12 rounded-3xl shadow-2xl shadow-sky-500/20">
             <h2 class="text-3xl font-bold text-center mb-2" id="decrypt-title">Recuperar Archivo</h2>
             <p class="text-center text-gray-500 text-sm mb-8" id="decrypt-sub">Escribe el código que te han pasado para abrir el paquete.</p>
-            
             <div class="space-y-6">
                 <div>
                     <label class="text-xs uppercase font-bold text-sky-500 ml-2" id="label-id">ID del archivo</label>
@@ -118,9 +105,7 @@
                     <label class="text-xs uppercase font-bold text-sky-500 ml-2" id="label-key">Código Secreto (#)</label>
                     <input type="password" id="input-key" placeholder="Llave de apertura" class="w-full bg-black border border-white/10 p-4 rounded-xl mt-1 focus:border-sky-500 outline-none transition">
                 </div>
-                
                 <button class="w-full bg-sky-600 py-4 rounded-xl font-bold text-lg hover:bg-sky-500 transition-all shadow-lg shadow-sky-600/20" id="decrypt-btn" onclick="descargarYDesencriptar()">Abrir y Descargar</button>
-            
             </div>
             <p class="text-[10px] text-gray-600 text-center mt-6 uppercase tracking-widest font-bold" id="privacy-note">Nota: Todo ocurre en tu equipo. Nosotros nunca vemos la llave.</p>
         </div>
@@ -130,6 +115,6 @@
         © 2026 NOXSEND - Hecho en España 🇪🇸 para mejorar tu seguridad.
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=nuke"></script>
 </body>
 </html>

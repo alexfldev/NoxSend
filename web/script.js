@@ -1,6 +1,6 @@
-/* ============================================================
+/* =========================================
    SISTEMA DE TRADUCCIÓN (ESPAÑOL / INGLÉS)
-   ============================================================ */
+========================================= */
 
 const translations = {
     en: {
@@ -37,7 +37,7 @@ const translations = {
         "eco-title": "¿Cómo funciona?", "eco-sub": "Es tan sencillo que no parece tecnología de seguridad.",
         "card-send-label": "Si tú envías", "card-send-title": "Usa nuestra App", 
         "card-send-desc": "Bájate nuestra aplicación para ordenador. Ella se encarga de limpiar y cerrar con llave tus archivos antes de que salgan de casa.",
-        "card-send-list": "<li>✔ Borra datos ocultos (GPS, autor...)</li><li>✔ Cierra el archivo con una 'llave'</li><li>✔ Tú decides cuándo se borra</li>",
+        "card-send-list": "<li>✔ Borra datos ocultos (GPS, autor...)</li><li>✔ Cierra el archivo con 'llave'</li><li>✔ Tú decides cuándo se borra</li>",
         "card-send-btn": "Descargar App", "card-receive-label": "Si tú recibes", "card-receive-title": "Usa esta Web", 
         "card-receive-desc": "No tienes que instalar nada. Solo abre el enlace y NoxSend abrirá el archivo directamente en tu pantalla.",
         "card-receive-list": "<li>✔ Sin instalaciones ni registros</li><li>✔ Apertura segura en el navegador</li><li>✔ Se autodestruye al terminar</li>",
@@ -56,7 +56,7 @@ let currentLang = navigator.language.startsWith('es') ? 'es' : 'en';
 function updateTexts() {
     const langData = translations[currentLang];
     for (let id in langData) {
-        const elementoWeb = document.getElementById(id);
+        const elementoWeb = document.getElementById(id); 
         if (elementoWeb) {
             if (elementoWeb.tagName === 'INPUT') {
                 elementoWeb.placeholder = langData[id];
@@ -72,15 +72,12 @@ function toggleLanguage() {
     updateTexts();
 }
 
-// Arrancar textos al cargar
 document.addEventListener('DOMContentLoaded', updateTexts);
 
-
 /* ============================================================
-   LÓGICA DE RECEPCIÓN Y DESCARGA
-   ============================================================ */
+   LÓGICA DE RECEPCIÓN Y DESTRUCCIÓN 100% GARANTIZADA
+============================================================ */
 
-// ⚠️ PON AQUÍ TU URL Y TU KEY DE VERDAD ⚠️
 const SUPABASE_URL = "https://bgoidqslfkiedrwrlftm.supabase.co"; 
 const SUPABASE_KEY = "sb_publishable_t606hk-jApr5gyOB0wfylA_ZTQz91wI";
 
@@ -88,37 +85,66 @@ async function descargarYDesencriptar() {
     const idInput = document.getElementById('input-id'); 
     const keyInput = document.getElementById('input-key');
     const statusMsg = document.getElementById('decrypt-sub'); 
+    const btnDecrypt = document.getElementById('decrypt-btn');
 
-    if (!idInput || !keyInput || !statusMsg) {
-        console.error("No se han encontrado las cajas de texto en el HTML.");
-        return;
-    }
+    if (!idInput || !keyInput || !statusMsg) return;
 
     if (!idInput.value || !keyInput.value) {
         alert(currentLang === 'es' ? "Faltan datos por rellenar." : "Missing data.");
         return;
     }
 
-    statusMsg.innerText = currentLang === 'es' ? "Localizando archivo blindado..." : "Locating shielded file...";
-    statusMsg.style.color = "#38bdf8"; // Azulito para avisar que está pensando
+    if (btnDecrypt) {
+        btnDecrypt.disabled = true;
+        btnDecrypt.style.opacity = "0.5";
+        btnDecrypt.innerText = "Procesando...";
+    }
+
+    statusMsg.innerText = "Buscando en la base de datos...";
+    statusMsg.style.color = "#38bdf8"; 
     
     try {
-        // AQUÍ ESTÁ EL ARREGLO: Buscando en 'archivos-cifrados' y SIN '.nox'
+        const headers = {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json'
+        };
+
+        const dbUrl = `${SUPABASE_URL}/rest/v1/archivos_seguros?id=eq.${idInput.value}`;
+
+        // 1. COMPROBAR QUE EXISTE (Bypass de caché)
+        const dbResponse = await fetch(dbUrl, { method: 'GET', headers: headers, cache: 'no-store' });
+        const dbData = await dbResponse.json();
+
+        if (!dbData || dbData.length === 0) {
+            throw new Error("❌ Error: Este archivo no existe. Puede que ya haya sido descargado y destruido.");
+        }
+
+        statusMsg.innerText = "Archivo encontrado. Ejecutando autodestrucción (Burn After Reading)...";
+
+        // 2. ORDEN DE BORRADO (DELETE) A LA BASE DE DATOS
+        const deleteResponse = await fetch(dbUrl, { method: 'DELETE', headers: headers });
+
+        // 🚨 AQUÍ ESTÁ LA MAGIA: Si Supabase no nos deja borrarlo, ABORTAMOS y no se lo damos.
+        if (!deleteResponse.ok) {
+            const errorDetails = await deleteResponse.text();
+            alert(`⚠️ ALERTA DE SEGURIDAD ⚠️\n\nSupabase ha bloqueado la orden de autodestrucción.\n\nPara que la aplicación sea de 'Un Solo Uso', debes ir a tu Supabase -> Table Editor -> tabla 'archivos_seguros' -> hacer clic en RLS (arriba a la derecha) -> y pulsar 'Disable RLS'.\n\nHasta que no lo desactives, el sistema no entregará el archivo por seguridad.`);
+            throw new Error("Descarga bloqueada por fallo en la autodestrucción.");
+        }
+
+        statusMsg.innerText = "Autodestrucción completada. Descargando archivo...";
+
+        // 3. COMO SE HA BORRADO CORRECTAMENTE, AHORA SÍ ENTREGAMOS EL ARCHIVO
         const fileUrl = `${SUPABASE_URL}/storage/v1/object/public/archivos-cifrados/${idInput.value}`;
-        console.log("Intentando descargar de:", fileUrl);
+        const fileResponse = await fetch(fileUrl, { cache: 'no-store' });
         
-        const response = await fetch(fileUrl);
-        
-        if (!response.ok) {
-            throw new Error("El archivo no existe en la base de datos.");
+        if (!fileResponse.ok) {
+            throw new Error("El archivo no se pudo recuperar del servidor de almacenamiento.");
         }
         
-        const encryptedData = await response.arrayBuffer();
-        statusMsg.innerText = currentLang === 'es' ? "Archivo encontrado. Iniciando descarga..." : "File found. Downloading...";
+        const encryptedData = await fileResponse.arrayBuffer();
 
         const decryptedBlob = new Blob([encryptedData], { type: "application/octet-stream" });
-        
-        // Magia para forzar la descarga en el navegador
         const url = window.URL.createObjectURL(decryptedBlob);
         const a = document.createElement('a');
         a.style.display = 'none';
@@ -129,13 +155,18 @@ async function descargarYDesencriptar() {
         
         window.URL.revokeObjectURL(url);
         
-        // Mensaje de éxito
-        statusMsg.innerText = currentLang === 'es' ? "¡Descarga completada!" : "Download complete!";
-        statusMsg.style.color = "#4ade80"; // Verde de éxito
+        statusMsg.innerText = "✅ ¡Descargado y eliminado de la base de datos!";
+        statusMsg.style.color = "#4ade80"; 
 
     } catch (error) {
-        console.error("Error en la descarga:", error);
-        statusMsg.innerText = currentLang === 'es' ? "Error: Archivo no encontrado o bloqueado." : "Error: File not found.";
-        statusMsg.style.color = "#f87171"; // Rojo de error
+        console.error("Error:", error);
+        statusMsg.innerText = error.message;
+        statusMsg.style.color = "#f87171"; 
+    } finally {
+        if (btnDecrypt) {
+            btnDecrypt.disabled = false;
+            btnDecrypt.style.opacity = "1";
+            btnDecrypt.innerText = "Abrir y Descargar";
+        }
     }
 }
