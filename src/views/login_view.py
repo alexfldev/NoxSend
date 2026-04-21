@@ -31,13 +31,13 @@ def LoginView(page: ft.Page):
     input_email = ft.TextField(
         label="Correo electrónico", width=340, border_radius=12,
         bgcolor=BG_ROOT, border_color=BORDER_COLOR, prefix_icon=ft.Icons.EMAIL_OUTLINED,
-        focused_border_color=ACCENT, cursor_color=ACCENT
+        focused_border_color=ACCENT, cursor_color=ACCENT, color="white" # COLOR BLANCO AÑADIDO
     )
     
     input_pass = ft.TextField(
         label="Contraseña", password=True, can_reveal_password=True, width=340, border_radius=12,
         bgcolor=BG_ROOT, border_color=BORDER_COLOR, prefix_icon=ft.Icons.LOCK_OUTLINED,
-        focused_border_color=ACCENT, cursor_color=ACCENT
+        focused_border_color=ACCENT, cursor_color=ACCENT, color="white" # COLOR BLANCO AÑADIDO
     )
     
     cargando = ft.ProgressRing(visible=False, width=24, height=24, color=ACCENT, stroke_width=3)
@@ -182,7 +182,7 @@ def LoginView(page: ft.Page):
                             ft.Text("NoxSend Workspace © 2024", size=11, color=ft.Colors.with_opacity(0.3, "white"), text_align="center")
                         ], horizontal_alignment="center", spacing=0)
                         
-                    ], alignment="spaceBetween") # <-- Esto asegura que el header quede arriba, el form en el medio, y el footer abajo
+                    ], alignment="spaceBetween") 
                 )
             ], expand=True, spacing=0)
         ]

@@ -1,14 +1,17 @@
 import flet as ft
-import pyperclip
 import os
-import shutil # Librería nativa para leer el almacenamiento del PC
+import shutil
 from src.controllers.app_controller import AppController
 
 def DashboardView(page: ft.Page):
     controlador = AppController()
     ruta_seleccionada = [None]
 
-    # --- PALETA PROTON ---
+    # --- CONFIGURACIÓN DE LÍMITES ---
+    LIMITE_GB = 1
+    LIMITE_BYTES = LIMITE_GB * 1024 * 1024 * 1024 # 1GB en Bytes
+
+    # --- PALETA PROTON (RECUPERADA Y BONITA) ---
     BG_ROOT = "#0f1115"
     BG_PANEL = "#16191f"
     BG_CARD = "#1c2028"
@@ -17,12 +20,12 @@ def DashboardView(page: ft.Page):
     BORDER_COLOR = ft.Colors.with_opacity(0.1, "white")
 
     # --- REFERENCIAS A TEXTOS DINÁMICOS ---
-    # Estos textos cambiarán según los datos reales de tu PC y tu bóveda
     txt_archivos_protegidos = ft.Text("0", size=24, weight="black", color="white")
     txt_espacio_libre = ft.Text("0 GB", size=24, weight="black", color="white")
 
+    # --- SOLUCIÓN AL ERROR DE LINUX: Usamos el portapapeles nativo de Flet ---
     def copiar(texto, msg):
-        pyperclip.copy(texto)
+        page.set_clipboard(texto)
         page.overlay.append(ft.SnackBar(ft.Text(f"{msg} copiado al portapapeles"), bgcolor=ACCENT, open=True))
         page.update()
 
@@ -71,7 +74,7 @@ def DashboardView(page: ft.Page):
                 TutorialStepModal(ft.Icons.LOCK, "1. Cifrado Local", "Todo ocurre en tu dispositivo. Usamos AES-256-GCM para encriptar tu archivo antes de que toque internet."),
                 TutorialStepModal(ft.Icons.CLOUD_UPLOAD, "2. Subida Segura", "El archivo blindado se sube a nuestra nube. Para nosotros, solo es 'ruido' matemático incomprensible."),
                 TutorialStepModal(ft.Icons.VPN_KEY, "3. La Llave Maestra", "El sistema genera una llave que NUNCA se envía a nuestros servidores. Tú eres el único dueño."),
-                TutorialStepModal(ft.Icons.SHARE, "4. Compartir", "Pásale el ID y la Llave al destinatario por un canal externo y seguro (ej. Signal o WhatsApp).")
+                TutorialStepModal(ft.Icons.SHARE, "4. Compartir", "Pásale el ID y la Llave al destinatario por un canal externo y seguro.")
             ], tight=True, spacing=15)
         ),
         actions=[
@@ -154,7 +157,6 @@ def DashboardView(page: ft.Page):
                     ft.Column([
                         ft.Text("Métricas de Seguridad", size=18, weight="bold", color="white"),
                         ft.Row([
-                            # Aquí insertamos los textos dinámicos en la interfaz
                             ft.Container(content=ft.Column([ft.Icon(ft.Icons.STORAGE, color=ACCENT), ft.Text("Espacio Libre PC", color=TEXT_MUTED, size=12), txt_espacio_libre]), bgcolor=BG_CARD, padding=25, border_radius=20, border=ft.border.all(1, BORDER_COLOR), expand=1),
                             ft.Container(content=ft.Column([ft.Icon(ft.Icons.SHIELD, color="green400"), ft.Text("Archivos Protegidos", color=TEXT_MUTED, size=12), txt_archivos_protegidos]), bgcolor=BG_CARD, padding=25, border_radius=20, border=ft.border.all(1, BORDER_COLOR), expand=1),
                         ]),
@@ -178,7 +180,7 @@ def DashboardView(page: ft.Page):
     # --- 3. VISTA: TRANSFERENCIA ---
     icon_status = ft.Icon(ft.Icons.FILE_UPLOAD_OUTLINED, color="grey600", size=60)
     text_status = ft.Text("Arrastra tu archivo aquí", size=20, weight="bold", color="white")
-    subtext_status = ft.Text("o haz clic para explorar tus carpetas", size=13, color=TEXT_MUTED)
+    subtext_status = ft.Text(f"Máximo {LIMITE_GB} GB por envío", size=13, color=TEXT_MUTED)
 
     drop_zone = ft.Container(
         content=ft.Column([icon_status, text_status, subtext_status], alignment="center", horizontal_alignment="center", spacing=10),
@@ -192,6 +194,34 @@ def DashboardView(page: ft.Page):
     texto_id = ft.TextField(label="ID SEGUIMIENTO (Público)", read_only=True, border_radius=12, text_size=12, color="white", bgcolor=BG_ROOT)
     texto_llave = ft.TextField(label="LLAVE MAESTRA (Privada)", read_only=True, password=True, can_reveal_password=True, border_radius=12, color="green400", bgcolor=BG_ROOT)
     
+    texto_codigo_cifrado = ft.Text("", font_family="Courier", color="green400", size=11, selectable=True)
+    
+    def cerrar_auditoria(e):
+        page.close(dialogo_prueba)
+        page.update()
+
+    dialogo_prueba = ft.AlertDialog(
+        modal=False,
+        title=ft.Row([ft.Icon(ft.Icons.TERMINAL, color="green400"), ft.Text("Auditoría de Carga Útil (AES-256)", weight="bold", color="white")]),
+        content=ft.Container(
+            width=550, height=250, bgcolor="black", padding=15, border_radius=10,
+            border=ft.border.all(1, ft.Colors.with_opacity(0.3, "green400")),
+            content=ft.Column([
+                ft.Text("Esto es exactamente lo único que recibe el servidor de Supabase. El archivo original ha sido destruido. Sin la llave maestra, esto es ruido matemático irrecuperable.", color="white70", size=12),
+                ft.Divider(color="white24"),
+                ft.Container(content=texto_codigo_cifrado, expand=True) 
+            ], scroll="auto")
+        ),
+        actions=[ft.TextButton("Cerrar", on_click=cerrar_auditoria, style=ft.ButtonStyle(color=TEXT_MUTED))],
+        bgcolor=BG_CARD
+    )
+
+    def abrir_prueba_cifrado(e):
+        page.open(dialogo_prueba)
+        page.update()
+
+    boton_prueba_cifrado = ft.ElevatedButton("Inspeccionar Carga Cifrada", icon=ft.Icons.TROUBLESHOOT, bgcolor=BG_ROOT, color="white", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10)), on_click=abrir_prueba_cifrado)
+
     panel_resultados = ft.Container(
         visible=False, padding=25, border_radius=24,
         bgcolor=ft.Colors.with_opacity(0.05, ACCENT), border=ft.border.all(1, ft.Colors.with_opacity(0.3, ACCENT)),
@@ -201,6 +231,8 @@ def DashboardView(page: ft.Page):
             ft.Container(height=10),
             ft.Row([texto_id, ft.IconButton(ft.Icons.COPY, icon_color=ACCENT, on_click=lambda _: copiar(texto_id.value, "ID"))], alignment="center"),
             ft.Row([texto_llave, ft.IconButton(ft.Icons.COPY, icon_color=ACCENT, on_click=lambda _: copiar(texto_llave.value, "Llave"))], alignment="center"),
+            ft.Container(height=5),
+            boton_prueba_cifrado
         ], horizontal_alignment="center", spacing=10)
     )
 
@@ -208,23 +240,33 @@ def DashboardView(page: ft.Page):
         if e.files:
             ruta = e.files[0].path
             ruta_seleccionada[0] = ruta
-            
-            # LECTURA DE DATOS REALES DEL ARCHIVO
             try:
                 peso_bytes = os.path.getsize(ruta)
                 peso_mb = peso_bytes / (1024 * 1024)
-                info_peso = f"Tamaño: {peso_mb:.2f} MB"
+                
+                # --- LÓGICA DE BLOQUEO POR TAMAÑO ---
+                if peso_bytes > LIMITE_BYTES:
+                    text_status.value = "ARCHIVO DEMASIADO GRANDE"
+                    subtext_status.value = f"{peso_mb:.2f} MB (Máximo {LIMITE_GB} GB)"
+                    text_status.color = "red400"
+                    icon_status.name = ft.Icons.ERROR_OUTLINE
+                    icon_status.color = "red400"
+                    drop_zone.border = ft.border.all(2, "red400")
+                    drop_zone.bgcolor = ft.Colors.with_opacity(0.05, "red")
+                    boton_enviar.disabled = True
+                else:
+                    text_status.value = e.files[0].name
+                    subtext_status.value = f"{peso_mb:.2f} MB - Listo para AES-256"
+                    text_status.color = "white"
+                    icon_status.name = ft.Icons.LOCK
+                    icon_status.color = ACCENT
+                    drop_zone.border = ft.border.all(2, ACCENT)
+                    drop_zone.bgcolor = ft.Colors.with_opacity(0.05, ACCENT)
+                    boton_enviar.disabled = False
             except:
-                info_peso = "Tamaño desconocido"
+                text_status.value = "Error al leer archivo"
+                boton_enviar.disabled = True
 
-            text_status.value = e.files[0].name
-            subtext_status.value = f"{info_peso} - Listo para AES-256"
-            
-            icon_status.name = ft.Icons.LOCK
-            icon_status.color = ACCENT
-            drop_zone.border = ft.border.all(2, ACCENT)
-            drop_zone.bgcolor = ft.Colors.with_opacity(0.05, ACCENT)
-            boton_enviar.disabled = False
             page.update()
 
     def ejecutar_envio(e):
@@ -232,17 +274,21 @@ def DashboardView(page: ft.Page):
         boton_enviar.disabled = True
         cargando.visible = True
         page.update()
+        
         res = controlador.enviar_archivo(ruta_seleccionada[0])
         cargando.visible = False
+        
         if res:
-            id_arc, key = res
+            id_arc, key, muestra_cifrada = res 
             texto_id.value = id_arc
             texto_llave.value = key
+            texto_codigo_cifrado.value = muestra_cifrada 
+            
             panel_resultados.visible = True
             text_status.value = "TRANSFERENCIA COMPLETADA"
             icon_status.name = ft.Icons.CHECK_CIRCLE
             icon_status.color = "green400"
-            sincronizar_datos_reales() # Actualiza Bóveda y Métricas
+            sincronizar_datos_reales() 
         page.update()
 
     selector = ft.FilePicker(on_result=al_seleccionar)
@@ -300,11 +346,24 @@ def DashboardView(page: ft.Page):
         ], rows=[]
     )
 
-    # Esta función ahora actualiza la tabla y los números del Panel Principal
+    def vaciar_boveda_click(e):
+        controlador.vaciar_boveda() 
+        sincronizar_datos_reales()
+        page.overlay.append(ft.SnackBar(ft.Text("Bóveda vaciada correctamente (Anti-forense)."), bgcolor="red", open=True))
+        page.update()
+
+    boton_vaciar_boveda = ft.ElevatedButton(
+        "Vaciar Bóveda",
+        icon=ft.Icons.DELETE_FOREVER,
+        bgcolor=ft.Colors.RED_700,
+        color="white",
+        on_click=vaciar_boveda_click,
+        tooltip="Destrucción de rastro local (Anti-forense)"
+    )
+
     def sincronizar_datos_reales():
         boveda = controlador.obtener_boveda()
         
-        # 1. Actualizar la Tabla de Bóveda
         tabla_historial.rows.clear()
         for reg in boveda:
             tabla_historial.rows.append(ft.DataRow(cells=[
@@ -313,19 +372,15 @@ def DashboardView(page: ft.Page):
                 ft.DataCell(ft.Text(reg[2], size=12, color=TEXT_MUTED))
             ]))
             
-        # 2. Actualizar Contador de Archivos (Métrica 1)
         txt_archivos_protegidos.value = str(len(boveda))
         
-        # 3. Leer Espacio Libre del PC Real (Métrica 2)
         try:
-            # Lee el disco donde se ejecuta la app (ej. C:\ o /home/)
             total, used, free = shutil.disk_usage(os.getcwd())
             free_gb = free / (1024 ** 3)
             txt_espacio_libre.value = f"{free_gb:.1f} GB"
         except:
             txt_espacio_libre.value = "-- GB"
             
-        # Refrescar vista
         try:
             page.update()
         except:
@@ -336,15 +391,20 @@ def DashboardView(page: ft.Page):
         content=ft.Container(
             width=1100,
             content=ft.Column([
-                ft.Text("Mi Bóveda", size=28, weight="black", color="white"),
-                ft.Text("Auditoría de todos los archivos que has protegido desde este dispositivo.", color=TEXT_MUTED, size=14),
+                ft.Row([
+                    ft.Column([
+                        ft.Text("Mi Bóveda", size=28, weight="black", color="white"),
+                        ft.Text("Auditoría de todos los archivos que has protegido desde este dispositivo.", color=TEXT_MUTED, size=14),
+                    ], expand=True),
+                    boton_vaciar_boveda 
+                ], alignment="spaceBetween"),
+                
                 ft.Container(height=20),
                 ft.Container(content=ft.Column([tabla_historial], scroll="auto"), bgcolor=BG_CARD, padding=25, border_radius=24, border=ft.border.all(1, BORDER_COLOR), expand=True)
             ])
         )
     )
     
-    # Llamamos a la sincronización al cargar la vista por primera vez
     sincronizar_datos_reales()
 
     # --- ENSAMBLAJE FINAL ---

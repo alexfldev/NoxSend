@@ -42,19 +42,19 @@ def RegisterView(page: ft.Page):
     input_email = ft.TextField(
         label="Correo electrónico", width=380, border_radius=12, text_size=15, height=60,
         bgcolor=BG_ROOT, border_color=BORDER_COLOR, prefix_icon=ft.Icons.EMAIL_OUTLINED,
-        focused_border_color=ACCENT, cursor_color=ACCENT
+        focused_border_color=ACCENT, cursor_color=ACCENT, color="white" # COLOR BLANCO AÑADIDO
     )
     
     input_pass = ft.TextField(
         label="Crea tu Contraseña Maestra", password=True, can_reveal_password=True, width=380, border_radius=12, text_size=15, height=60,
         bgcolor=BG_ROOT, border_color=BORDER_COLOR, prefix_icon=ft.Icons.LOCK_OUTLINED,
-        focused_border_color=ACCENT, cursor_color=ACCENT
+        focused_border_color=ACCENT, cursor_color=ACCENT, color="white" # COLOR BLANCO AÑADIDO
     )
 
     input_confirm = ft.TextField(
         label="Confirma tu Contraseña", password=True, can_reveal_password=True, width=380, border_radius=12, text_size=15, height=60,
         bgcolor=BG_ROOT, border_color=BORDER_COLOR, prefix_icon=ft.Icons.CHECK_CIRCLE_OUTLINE,
-        focused_border_color=ACCENT, cursor_color=ACCENT
+        focused_border_color=ACCENT, cursor_color=ACCENT, color="white" # COLOR BLANCO AÑADIDO
     )
     
     cargando = ft.ProgressRing(visible=False, width=24, height=24, color=ACCENT, stroke_width=3)

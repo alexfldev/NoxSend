@@ -2,6 +2,7 @@ import os
 import secrets
 import string
 import uuid
+import base64
 from datetime import datetime, timedelta, timezone
 from src.services.supabase_service import SupabaseService
 from src.core.crypto_manager import CryptoManager
@@ -38,12 +39,22 @@ class AppController:
         if self.supabase.subir_archivo_cifrado(id_archivo, ruta_cifrada):
             self.supabase.registrar_metadatos(paquete.to_dict())
             self.vault.registrar_envio(id_archivo, os.path.basename(ruta_original), ahora.strftime("%Y-%m-%d %H:%M"))
+            
+            # --- NUEVO: Extraer una muestra del ruido matemático para la Auditoría ---
+            try:
+                with open(ruta_cifrada, "rb") as f:
+                    muestra_bytes = f.read(512) # Leemos los primeros 512 bytes del archivo encriptado
+                muestra_b64 = base64.b64encode(muestra_bytes).decode('utf-8')
+            except:
+                muestra_b64 = "Error al leer la muestra cifrada."
+            # -------------------------------------------------------------------------
+
             os.remove(ruta_cifrada)
-            return id_archivo, llave_secreta
+            return id_archivo, llave_secreta, muestra_b64 # Ahora devolvemos 3 variables
         return None
 
     def obtener_boveda(self):
         return self.vault.obtener_historial()
 
-    def limpiar_boveda(self):
-        self.vault.limpiar_historial()
+    def vaciar_boveda(self):
+        return self.vault.limpiar_historial()

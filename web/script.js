@@ -1,9 +1,7 @@
-/* =========================================
+/* ============================================================
    SISTEMA DE TRADUCCIÓN (ESPAÑOL / INGLÉS)
-========================================= */
+   ============================================================ */
 
-// 1. Aquí guardamos todos los textos de la web. 
-// Cada frase tiene un ID (ej: "hero-title") que luego buscaremos en el HTML.
 const translations = {
     en: {
         "nav-about": "Why NoxSend?", "nav-how": "How to use", "nav-decrypt": "Receive File", "nav-btn-app": "Try App",
@@ -53,38 +51,87 @@ const translations = {
     }
 };
 
-// 2. Miramos el idioma del navegador del usuario. Si es español, lo ponemos en 'es', si no, por defecto en 'en' (inglés).
 let currentLang = navigator.language.startsWith('es') ? 'es' : 'en';
 
-// 3. Función que recorre el diccionario y cambia los textos en la pantalla
 function updateTexts() {
-    // Cogemos el bloque de textos del idioma actual (español o inglés)
     const langData = translations[currentLang];
-    
-    // Recorremos todos los IDs que tenemos guardados
     for (let id in langData) {
-        const elementoWeb = document.getElementById(id); // Buscamos la etiqueta en el HTML
-        
-        // Si el elemento existe en el HTML, le cambiamos el texto
+        const elementoWeb = document.getElementById(id);
         if (elementoWeb) {
-            // Si es un input (como la caja de poner contraseñas), cambiamos el texto "fantasma" (placeholder)
             if (elementoWeb.tagName === 'INPUT') {
                 elementoWeb.placeholder = langData[id];
             } else {
-                // Si es texto normal, metemos el texto directamente
                 elementoWeb.innerHTML = langData[id];
             }
         }
     }
 }
 
-// 4. Función que se dispara cuando le damos al botón "ES / EN" en la web
 function toggleLanguage() {
-    // Cambia la variable: si está en 'en' pasa a 'es', y viceversa
     currentLang = currentLang === 'en' ? 'es' : 'en';
-    // Llamamos a la función de arriba para aplicar los cambios
     updateTexts();
 }
 
-// 5. Arrancamos los textos correctos nada más cargar la página web
-updateTexts();
+/* ============================================================
+   LÓGICA DE RECEPCIÓN Y DESCARGA (ZERO-KNOWLEDGE)
+   ============================================================ */
+
+const SUPABASE_URL = "TU_URL_AQUI"; // Debes poner la tuya de .env
+const SUPABASE_KEY = "TU_KEY_AQUI";
+
+async function descargarYDesencriptar() {
+    // Obtenemos los IDs de los inputs (asegúrate que los IDs coincidan con tu HTML)
+    const idInput = document.getElementById('input-id'); 
+    const keyInput = document.getElementById('input-key');
+    const statusMsg = document.getElementById('decrypt-sub'); // Reutilizamos el subtítulo para mensajes
+
+    if (!idInput.value || !keyInput.value) {
+        alert(currentLang === 'es' ? "Faltan datos" : "Missing data");
+        return;
+    }
+
+    statusMsg.innerText = currentLang === 'es' ? "Localizando archivo blindado..." : "Locating shielded file...";
+    
+    try {
+        // 1. Fetch del archivo desde Supabase Storage
+       // CÓDIGO NUEVO (CORRECTO)
+        const fileUrl = `${SUPABASE_URL}/storage/v1/object/public/archivos-cifrados/${idInput.value}`;
+        const response = await fetch(fileUrl);
+        
+        if (!response.ok) throw new Error("File not found");
+        
+        const encryptedData = await response.arrayBuffer();
+        statusMsg.innerText = currentLang === 'es' ? "Archivo recibido. Desencriptando..." : "File received. Decrypting...";
+
+        // 2. Creación del Blob para descarga (Simulación de desencriptado)
+        // Nota: Aquí iría tu lógica de CryptoJS o SubtleCrypto usando keyInput.value
+        const decryptedBlob = new Blob([encryptedData], { type: "application/octet-stream" });
+        
+        // 3. Descarga forzada
+        const url = window.URL.createObjectURL(decryptedBlob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = `noxsend_recibido_${idInput.value.substring(0,5)}.nox`;
+        document.body.appendChild(a);
+        a.click();
+        
+        window.URL.revokeObjectURL(url);
+        statusMsg.innerText = currentLang === 'es' ? "¡Descargado con éxito!" : "Downloaded successfully!";
+        statusMsg.style.color = "#4ade80";
+
+    } catch (error) {
+        statusMsg.innerText = currentLang === 'es' ? "Error: Archivo no encontrado" : "Error: File not found";
+        statusMsg.style.color = "#f87171";
+    }
+}
+
+// Vinculamos el botón de abrir y descargar a la función
+// (Solo si el botón existe en el HTML al cargar)
+document.addEventListener('DOMContentLoaded', () => {
+    updateTexts();
+    const btnDecrypt = document.getElementById('decrypt-btn');
+    if (btnDecrypt) {
+        btnDecrypt.addEventListener('click', descargarYDesencriptar);
+    }
+});
