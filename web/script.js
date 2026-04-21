@@ -72,42 +72,53 @@ function toggleLanguage() {
     updateTexts();
 }
 
+// Arrancar textos al cargar
+document.addEventListener('DOMContentLoaded', updateTexts);
+
+
 /* ============================================================
-   LÓGICA DE RECEPCIÓN Y DESCARGA (ZERO-KNOWLEDGE)
+   LÓGICA DE RECEPCIÓN Y DESCARGA
    ============================================================ */
 
-const SUPABASE_URL = "TU_URL_AQUI"; // Debes poner la tuya de .env
-const SUPABASE_KEY = "TU_KEY_AQUI";
+// ⚠️ PON AQUÍ TU URL Y TU KEY DE VERDAD ⚠️
+const SUPABASE_URL = "https://bgoidqslfkiedrwrlftm.supabase.co"; 
+const SUPABASE_KEY = "sb_publishable_t606hk-jApr5gyOB0wfylA_ZTQz91wI";
 
 async function descargarYDesencriptar() {
-    // Obtenemos los IDs de los inputs (asegúrate que los IDs coincidan con tu HTML)
     const idInput = document.getElementById('input-id'); 
     const keyInput = document.getElementById('input-key');
-    const statusMsg = document.getElementById('decrypt-sub'); // Reutilizamos el subtítulo para mensajes
+    const statusMsg = document.getElementById('decrypt-sub'); 
+
+    if (!idInput || !keyInput || !statusMsg) {
+        console.error("No se han encontrado las cajas de texto en el HTML.");
+        return;
+    }
 
     if (!idInput.value || !keyInput.value) {
-        alert(currentLang === 'es' ? "Faltan datos" : "Missing data");
+        alert(currentLang === 'es' ? "Faltan datos por rellenar." : "Missing data.");
         return;
     }
 
     statusMsg.innerText = currentLang === 'es' ? "Localizando archivo blindado..." : "Locating shielded file...";
+    statusMsg.style.color = "#38bdf8"; // Azulito para avisar que está pensando
     
     try {
-        // 1. Fetch del archivo desde Supabase Storage
-       // CÓDIGO NUEVO (CORRECTO)
+        // AQUÍ ESTÁ EL ARREGLO: Buscando en 'archivos-cifrados' y SIN '.nox'
         const fileUrl = `${SUPABASE_URL}/storage/v1/object/public/archivos-cifrados/${idInput.value}`;
+        console.log("Intentando descargar de:", fileUrl);
+        
         const response = await fetch(fileUrl);
         
-        if (!response.ok) throw new Error("File not found");
+        if (!response.ok) {
+            throw new Error("El archivo no existe en la base de datos.");
+        }
         
         const encryptedData = await response.arrayBuffer();
-        statusMsg.innerText = currentLang === 'es' ? "Archivo recibido. Desencriptando..." : "File received. Decrypting...";
+        statusMsg.innerText = currentLang === 'es' ? "Archivo encontrado. Iniciando descarga..." : "File found. Downloading...";
 
-        // 2. Creación del Blob para descarga (Simulación de desencriptado)
-        // Nota: Aquí iría tu lógica de CryptoJS o SubtleCrypto usando keyInput.value
         const decryptedBlob = new Blob([encryptedData], { type: "application/octet-stream" });
         
-        // 3. Descarga forzada
+        // Magia para forzar la descarga en el navegador
         const url = window.URL.createObjectURL(decryptedBlob);
         const a = document.createElement('a');
         a.style.display = 'none';
@@ -117,21 +128,14 @@ async function descargarYDesencriptar() {
         a.click();
         
         window.URL.revokeObjectURL(url);
-        statusMsg.innerText = currentLang === 'es' ? "¡Descargado con éxito!" : "Downloaded successfully!";
-        statusMsg.style.color = "#4ade80";
+        
+        // Mensaje de éxito
+        statusMsg.innerText = currentLang === 'es' ? "¡Descarga completada!" : "Download complete!";
+        statusMsg.style.color = "#4ade80"; // Verde de éxito
 
     } catch (error) {
-        statusMsg.innerText = currentLang === 'es' ? "Error: Archivo no encontrado" : "Error: File not found";
-        statusMsg.style.color = "#f87171";
+        console.error("Error en la descarga:", error);
+        statusMsg.innerText = currentLang === 'es' ? "Error: Archivo no encontrado o bloqueado." : "Error: File not found.";
+        statusMsg.style.color = "#f87171"; // Rojo de error
     }
 }
-
-// Vinculamos el botón de abrir y descargar a la función
-// (Solo si el botón existe en el HTML al cargar)
-document.addEventListener('DOMContentLoaded', () => {
-    updateTexts();
-    const btnDecrypt = document.getElementById('decrypt-btn');
-    if (btnDecrypt) {
-        btnDecrypt.addEventListener('click', descargarYDesencriptar);
-    }
-});
