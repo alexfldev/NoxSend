@@ -7,6 +7,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* CSS inyectado para garantizar un scroll infinito perfecto de lado a lado */
+        @keyframes marquee-infinite {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee-infinite {
+            display: flex;
+            width: max-content;
+            animation: marquee-infinite 25s linear infinite;
+        }
+        /* Pausa la animación si pasas el ratón por encima (toque premium) */
+        .animate-marquee-infinite:hover {
+            animation-play-state: paused;
+        }
+    </style>
 </head>
 <body>
 
@@ -15,7 +31,7 @@
             <div class="text-2xl font-bold tracking-tighter">Nox<span class="text-sky-500">Send</span></div>
             <div class="space-x-8 hidden md:flex text-sm uppercase tracking-widest">
                 <a href="#about" id="nav-about" class="hover:text-sky-400 transition">¿Por qué NoxSend?</a>
-                <a href="#ecosystem" id="nav-how" class="hover:text-sky-400 transition">Cómo se usa</a>
+                <a href="#ecosystem" id="nav-how" class="hover:text-sky-400 transition">Cómo funciona</a>
                 <a href="#decrypt" id="nav-decrypt" class="text-sky-500 font-bold hover:text-sky-400 transition">Recibir Archivo</a>
             </div>
             <div class="flex items-center gap-4">
@@ -27,7 +43,7 @@
 
     <header class="hero-gradient pt-40 pb-24 px-6 text-center">
         <h1 class="text-5xl md:text-7xl font-bold mb-6 italic" id="hero-title">Envía archivos sin <br>dejar rastro.</h1>
-        <p class="text-gray-400 max-w-2xl mx-auto text-lg mb-10" id="hero-sub">Comparte fotos, vídeos y documentos con la certeza de que tus archivos están blindados. Gracias a nuestra tecnología, tú mantienes el control total.</p>
+        <p class="text-gray-400 max-w-2xl mx-auto text-lg mb-10" id="hero-sub">Comparte fotos, vídeos o documentos sensibles con total tranquilidad. Todo se encripta en tu PC antes de salir a internet. Tú tienes el control, nosotros no sabemos nada.</p>
         
         <div class="flex flex-col md:flex-row justify-center gap-4 mt-6">
             <a href="Descargas/NoxSend.exe" download="NoxSend_Windows.exe" style="text-decoration: none;">
@@ -45,36 +61,46 @@
 
     <section id="breaches" class="py-12 md:py-16 bg-red-950/20 border-y border-red-500/10 overflow-hidden relative">
         <div class="max-w-4xl mx-auto px-6 mb-8 md:mb-10 text-center relative z-10">
-            <h2 class="text-xl md:text-3xl font-bold text-red-500 mb-3 md:mb-4" id="breach-title">Ninguna nube centralizada es 100% segura.</h2>
-            <p class="text-gray-400 text-sm md:text-base" id="breach-sub">Millones de cuentas y archivos privados han sido expuestos porque los servidores guardaban las "llaves" de los usuarios.</p>
+            <h2 class="text-xl md:text-3xl font-bold text-red-500 mb-3 md:mb-4" id="breach-title">Las nubes centralizadas no son 100% fiables.</h2>
+            <p class="text-gray-400 text-sm md:text-base" id="breach-sub">Todos los días se vulneran servidores gigantes porque guardan las llaves de los archivos. Si sus sistemas fallan, tus datos quedan expuestos.</p>
         </div>
-        <div class="marquee-container opacity-70">
-            <div class="marquee-track">
-                <span class="bg-black/50 border border-red-500/30 px-4 py-2 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">Wattpad <span class="text-red-400 ml-1">(270M expuestos)</span></span>
-                <span class="bg-black/50 border border-red-500/30 px-4 py-2 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">Dropbox <span class="text-red-400 ml-1">(68M expuestos)</span></span>
-                <span class="bg-black/50 border border-red-500/30 px-4 py-2 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">LinkedIn <span class="text-red-400 ml-1">(700M expuestos)</span></span>
-                <span class="bg-black/50 border border-red-500/30 px-4 py-2 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">Canva <span class="text-red-400 ml-1">(137M expuestos)</span></span>
+        
+        <div class="overflow-hidden relative w-full opacity-70">
+            <div class="animate-marquee-infinite flex gap-4 px-4">
+                <span class="bg-black/50 border border-red-500/30 px-6 py-3 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">Wattpad <span class="text-red-400 ml-1">(270M expuestos)</span></span>
+                <span class="bg-black/50 border border-red-500/30 px-6 py-3 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">Dropbox <span class="text-red-400 ml-1">(68M expuestos)</span></span>
+                <span class="bg-black/50 border border-red-500/30 px-6 py-3 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">LinkedIn <span class="text-red-400 ml-1">(700M expuestos)</span></span>
+                <span class="bg-black/50 border border-red-500/30 px-6 py-3 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">Canva <span class="text-red-400 ml-1">(137M expuestos)</span></span>
+                <span class="bg-black/50 border border-red-500/30 px-6 py-3 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">Wattpad <span class="text-red-400 ml-1">(270M expuestos)</span></span>
+                <span class="bg-black/50 border border-red-500/30 px-6 py-3 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">Dropbox <span class="text-red-400 ml-1">(68M expuestos)</span></span>
+                <span class="bg-black/50 border border-red-500/30 px-6 py-3 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">LinkedIn <span class="text-red-400 ml-1">(700M expuestos)</span></span>
+                <span class="bg-black/50 border border-red-500/30 px-6 py-3 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">Canva <span class="text-red-400 ml-1">(137M expuestos)</span></span>
+                <span class="bg-black/50 border border-red-500/30 px-6 py-3 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">Wattpad <span class="text-red-400 ml-1">(270M expuestos)</span></span>
+                <span class="bg-black/50 border border-red-500/30 px-6 py-3 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">Dropbox <span class="text-red-400 ml-1">(68M expuestos)</span></span>
+                <span class="bg-black/50 border border-red-500/30 px-6 py-3 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">LinkedIn <span class="text-red-400 ml-1">(700M expuestos)</span></span>
+                <span class="bg-black/50 border border-red-500/30 px-6 py-3 rounded-lg font-bold text-[10px] md:text-sm text-gray-300 whitespace-nowrap">Canva <span class="text-red-400 ml-1">(137M expuestos)</span></span>
             </div>
         </div>
+
         <div class="text-center mt-8 md:mt-12 relative z-10">
-            <p class="text-[10px] md:text-sm font-bold text-white uppercase tracking-widest bg-red-600/20 inline-block px-4 md:px-6 py-2 rounded-full border border-red-500/50" id="breach-conclusion">¿Vas a confiarles tus documentos más sensibles?</p>
+            <p class="text-[10px] md:text-sm font-bold text-white uppercase tracking-widest bg-red-600/20 inline-block px-4 md:px-6 py-2 rounded-full border border-red-500/50" id="breach-conclusion">¿En serio vas a confiarles tu información más privada?</p>
         </div>
     </section>
 
     <section id="ecosystem" class="py-20 max-w-7xl mx-auto px-6">
         <div class="text-center mb-16">
             <h2 class="text-4xl font-bold mb-4" id="eco-title">¿Cómo funciona?</h2>
-            <p class="text-gray-500" id="eco-sub">Es muy sencillo de usar.</p>
+            <p class="text-gray-500" id="eco-sub">Seguridad avanzada, sin complicaciones.</p>
         </div>
         <div class="grid md:grid-cols-2 gap-8">
             <div class="platform-card p-10 rounded-3xl border-l-4 border-l-sky-500 flex flex-col">
-                <div class="text-sky-500 font-bold text-sm uppercase tracking-widest mb-4" id="card-send-label">Si tú envías</div>
-                <h3 class="text-3xl font-bold mb-4" id="card-send-title">Usa nuestra App</h3>
-                <p class="text-gray-400 mb-6" id="card-send-desc">Bájate nuestra aplicación para ordenador. Al enviar cualquier archivo, ella se encarga de limpiar y cerrar con llave todo antes de que salgan de tu ordenador.</p>
+                <div class="text-sky-500 font-bold text-sm uppercase tracking-widest mb-4" id="card-send-label">Si vas a enviar</div>
+                <h3 class="text-3xl font-bold mb-4" id="card-send-title">Usa la App de PC</h3>
+                <p class="text-gray-400 mb-6" id="card-send-desc">Descarga nuestra aplicación. Selecciona el archivo y el sistema lo encriptará con una llave única antes de que toque internet.</p>
                 <ul class="text-sm text-gray-500 space-y-2 mb-8 flex-grow" id="card-send-list">
-                    <li>✔ Borra datos ocultos (GPS, autor...)</li>
-                    <li>✔ Cierra el archivo con una "llave"</li>
-                    <li>✔ Tú decides cuándo se borra</li>
+                    <li>✔ Limpia datos ocultos (GPS, autor...)</li>
+                    <li>✔ Cifrado de grado alto/li>
+                    <li>✔ Tú decides cuándo caduca</li>
                 </ul>
                 
                 <div class="space-y-3 mt-auto">
@@ -88,47 +114,47 @@
             </div>
             
             <div class="platform-card p-10 rounded-3xl border-l-4 border-l-white flex flex-col">
-                <div class="text-gray-500 font-bold text-sm uppercase tracking-widest mb-4" id="card-receive-label">Si tú recibes</div>
-                <h3 class="text-3xl font-bold mb-4" id="card-receive-title">Usa esta Web</h3>
-                <p class="text-gray-400 mb-6" id="card-receive-desc">No tienes que instalar nada. Solo abre el enlace y NoxSend abrirá el archivo directamente en tu pantalla.</p>
+                <div class="text-gray-500 font-bold text-sm uppercase tracking-widest mb-4" id="card-receive-label">Si vas a recibir</div>
+                <h3 class="text-3xl font-bold mb-4" id="card-receive-title">Directo en la Web</h3>
+                <p class="text-gray-400 mb-6" id="card-receive-desc">Cero instalaciones. Abres el enlace que te pasen, introduces la llave secreta y descargas el archivo de forma segura.</p>
                 <ul class="text-sm text-gray-500 space-y-2 mb-8 flex-grow" id="card-receive-list">
-                    <li>✔ Sin instalaciones ni registros</li>
-                    <li>✔ Apertura segura en el navegador</li>
-                    <li>✔ Se autodestruye al terminar</li>
+                    <li>✔ Sin necesidad de registrarte</li>
+                    <li>✔ Desencriptado en tu propio navegador</li>
+                    <li>✔ Se autodestruye al instante</li>
                 </ul>
-                <a href="#decrypt" class="block w-full text-center py-3 mt-auto bg-white/10 rounded-xl font-bold hover:bg-white/20 transition" id="card-receive-btn">Ir al panel de recepción</a>
+                <a href="#decrypt" class="block w-full text-center py-3 mt-auto bg-white/10 rounded-xl font-bold hover:bg-white/20 transition" id="card-receive-btn">Ir a desbloquear archivo</a>
             </div>
         </div>
     </section>
 
     <section id="about" class="py-20 max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center border-t border-white/5">
         <div>
-            <h2 class="text-3xl font-bold mb-6" id="about-title">Privacidad sin compromisos. <br>Somos tu "punto ciego".</h2>
-            <p class="text-gray-400 mb-4" id="about-p1">La mayoría de los servicios en la nube conservan copias de lo que envías. Nosotros no.</p>
-            <p class="text-gray-400" id="about-p2">NoxSend nació para que tus documentos sigan siendo privados. El rastro de tu archivo se borra antes de que nadie pueda verlo.</p>
+            <h2 class="text-3xl font-bold mb-6" id="about-title">Privacidad real.<br>Nuestro negocio no son tus datos.</h2>
+            <p class="text-gray-400 mb-4" id="about-p1">La mayoría de las nubes guardan copias de todo lo que subes. Nosotros no lo hacemos.</p>
+            <p class="text-gray-400" id="about-p2">NoxSend nació de la necesidad de recuperar el control sobre nuestra privacidad. Aquí tú eres el único dueño de tu información. La envías, la descargan y se borra para siempre.</p>
         </div>
         <div class="bg-white/5 p-10 rounded-3xl border border-white/10 text-center">
             <div class="text-5xl mb-4">🛡️</div>
-            <p class="text-sm text-gray-500 italic" id="about-quote">Si nosotros no podemos ver tus datos, nadie puede robárnoslos.</p>
+            <p class="text-sm text-gray-500 italic" id="about-quote">Si nosotros no tenemos tu llave, es matemáticamente imposible que accedan a tus datos.</p>
         </div>
     </section>
 
     <section id="decrypt" class="py-32 max-w-xl mx-auto px-6">
         <div class="bg-sky-600/10 border-2 border-sky-500/30 p-12 rounded-3xl shadow-2xl shadow-sky-500/20">
-            <h2 class="text-3xl font-bold text-center mb-2" id="decrypt-title">Recuperar Archivo</h2>
-            <p class="text-center text-gray-500 text-sm mb-8" id="decrypt-sub">Escribe el código que te han pasado para abrir el paquete.</p>
+            <h2 class="text-3xl font-bold text-center mb-2" id="decrypt-title">Desbloquear Archivo</h2>
+            <p class="text-center text-gray-500 text-sm mb-8" id="decrypt-sub">Pega el ID y la llave secreta que te han compartido por un canal seguro.</p>
             <div class="space-y-6">
                 <div>
-                    <label class="text-xs uppercase font-bold text-sky-500 ml-2" id="label-id">ID del archivo</label>
-                    <input type="text" id="input-id" placeholder="Pega aquí el enlace o ID" class="w-full bg-black border border-white/10 p-4 rounded-xl mt-1 focus:border-sky-500 outline-none transition">
+                    <label class="text-xs uppercase font-bold text-sky-500 ml-2" id="label-id">ID DEL ARCHIVO</label>
+                    <input type="text" id="input-id" placeholder="Pega aquí el ID" class="w-full bg-black border border-white/10 p-4 rounded-xl mt-1 focus:border-sky-500 outline-none transition">
                 </div>
                 <div>
-                    <label class="text-xs uppercase font-bold text-sky-500 ml-2" id="label-key">Código Secreto (#)</label>
-                    <input type="password" id="input-key" placeholder="Llave de apertura" class="w-full bg-black border border-white/10 p-4 rounded-xl mt-1 focus:border-sky-500 outline-none transition">
+                    <label class="text-xs uppercase font-bold text-sky-500 ml-2" id="label-key">LLAVE SECRETA (#)</label>
+                    <input type="password" id="input-key" placeholder="Tu llave de apertura" class="w-full bg-black border border-white/10 p-4 rounded-xl mt-1 focus:border-sky-500 outline-none transition">
                 </div>
                 <button class="w-full bg-sky-600 py-4 rounded-xl font-bold text-lg hover:bg-sky-500 transition-all shadow-lg shadow-sky-600/20" id="decrypt-btn" onclick="descargarYDesencriptar()">Abrir y Descargar</button>
             </div>
-            <p class="text-[10px] text-gray-600 text-center mt-6 uppercase tracking-widest font-bold" id="privacy-note">Nota: Todo ocurre en tu equipo. Nosotros nunca vemos la llave.</p>
+            <p class="text-[10px] text-gray-600 text-center mt-6 uppercase tracking-widest font-bold" id="privacy-note">Nota: Todo el proceso se hace en tu ordenador. Nosotros ni vemos ni guardamos esta llave.</p>
         </div>
     </section>
 
