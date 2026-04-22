@@ -20,7 +20,7 @@
             </div>
             <div class="flex items-center gap-4">
                 <button onclick="toggleLanguage()" id="lang-toggle" class="text-xs border border-white/20 px-3 py-1 rounded-full hover:bg-white/10 transition uppercase">ES / EN</button>
-                <button id="nav-btn-app" class="bg-white text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-sky-400 transition">Probar App</button>
+                <a href="#ecosystem"><button id="nav-btn-app" class="bg-white text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-sky-400 transition">Probar App</button></a>
             </div>
         </div>
     </nav>
@@ -28,7 +28,19 @@
     <header class="hero-gradient pt-40 pb-24 px-6 text-center">
         <h1 class="text-5xl md:text-7xl font-bold mb-6 italic" id="hero-title">Envía archivos sin <br>dejar rastro.</h1>
         <p class="text-gray-400 max-w-2xl mx-auto text-lg mb-10" id="hero-sub">Comparte fotos, vídeos y documentos con la certeza de que tus archivos están blindados. Gracias a nuestra tecnología, tú mantienes el control total.</p>
-        <button class="bg-sky-600 px-8 py-4 rounded-xl font-bold hover:bg-sky-500 transition shadow-lg shadow-sky-600/20" id="hero-btn">Descargar para ordenador</button>
+        
+        <div class="flex flex-col md:flex-row justify-center gap-4 mt-6">
+            <a href="Descargas/NoxSend.exe" download="NoxSend_Windows.exe" style="text-decoration: none;">
+                <button class="w-full md:w-auto bg-sky-600 px-8 py-4 rounded-xl font-bold hover:bg-sky-500 transition shadow-lg shadow-sky-600/20 flex items-center justify-center gap-2">
+                    🖥️ Descargar para Windows
+                </button>
+            </a>
+            <a href="Descargas/NoxSend" download="NoxSend_Linux" style="text-decoration: none;">
+                <button class="w-full md:w-auto bg-white/5 border border-white/20 px-8 py-4 rounded-xl font-bold hover:bg-white/10 transition flex items-center justify-center gap-2">
+                    🐧 Descargar para Linux
+                </button>
+            </a>
+        </div>
     </header>
 
     <section id="breaches" class="py-12 md:py-16 bg-red-950/20 border-y border-red-500/10 overflow-hidden relative">
@@ -55,27 +67,36 @@
             <p class="text-gray-500" id="eco-sub">Es muy sencillo de usar.</p>
         </div>
         <div class="grid md:grid-cols-2 gap-8">
-            <div class="platform-card p-10 rounded-3xl border-l-4 border-l-sky-500">
+            <div class="platform-card p-10 rounded-3xl border-l-4 border-l-sky-500 flex flex-col">
                 <div class="text-sky-500 font-bold text-sm uppercase tracking-widest mb-4" id="card-send-label">Si tú envías</div>
                 <h3 class="text-3xl font-bold mb-4" id="card-send-title">Usa nuestra App</h3>
                 <p class="text-gray-400 mb-6" id="card-send-desc">Bájate nuestra aplicación para ordenador. Al enviar cualquier archivo, ella se encarga de limpiar y cerrar con llave todo antes de que salgan de tu ordenador.</p>
-                <ul class="text-sm text-gray-500 space-y-2 mb-8" id="card-send-list">
+                <ul class="text-sm text-gray-500 space-y-2 mb-8 flex-grow" id="card-send-list">
                     <li>✔ Borra datos ocultos (GPS, autor...)</li>
                     <li>✔ Cierra el archivo con una "llave"</li>
                     <li>✔ Tú decides cuándo se borra</li>
                 </ul>
-                <button class="w-full py-3 border border-white/20 rounded-xl font-bold hover:bg-white hover:text-black transition" id="card-send-btn">Descargar App</button>
+                
+                <div class="space-y-3 mt-auto">
+                    <a href="Descargas/NoxSend.exe" download="NoxSend_Windows.exe" class="block" style="text-decoration: none;">
+                        <button class="w-full py-3 bg-sky-600 hover:bg-sky-500 rounded-xl font-bold text-white transition">🖥️ Descargar Windows</button>
+                    </a>
+                    <a href="Descargas/NoxSend" download="NoxSend_Linux" class="block" style="text-decoration: none;">
+                        <button class="w-full py-3 border border-white/20 rounded-xl font-bold text-white hover:bg-white/10 transition">🐧 Descargar Linux</button>
+                    </a>
+                </div>
             </div>
-            <div class="platform-card p-10 rounded-3xl border-l-4 border-l-white">
+            
+            <div class="platform-card p-10 rounded-3xl border-l-4 border-l-white flex flex-col">
                 <div class="text-gray-500 font-bold text-sm uppercase tracking-widest mb-4" id="card-receive-label">Si tú recibes</div>
                 <h3 class="text-3xl font-bold mb-4" id="card-receive-title">Usa esta Web</h3>
                 <p class="text-gray-400 mb-6" id="card-receive-desc">No tienes que instalar nada. Solo abre el enlace y NoxSend abrirá el archivo directamente en tu pantalla.</p>
-                <ul class="text-sm text-gray-500 space-y-2 mb-8" id="card-receive-list">
+                <ul class="text-sm text-gray-500 space-y-2 mb-8 flex-grow" id="card-receive-list">
                     <li>✔ Sin instalaciones ni registros</li>
                     <li>✔ Apertura segura en el navegador</li>
                     <li>✔ Se autodestruye al terminar</li>
                 </ul>
-                <a href="#decrypt" class="block w-full text-center py-3 bg-white/10 rounded-xl font-bold hover:bg-white/20 transition" id="card-receive-btn">Ir al panel de recepción</a>
+                <a href="#decrypt" class="block w-full text-center py-3 mt-auto bg-white/10 rounded-xl font-bold hover:bg-white/20 transition" id="card-receive-btn">Ir al panel de recepción</a>
             </div>
         </div>
     </section>
